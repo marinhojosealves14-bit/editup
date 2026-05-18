@@ -31,7 +31,7 @@ export function DashboardAccessGuard({ children }: { children: React.ReactNode }
     )
   }
 
-  if (canAccessDashboardPath(pathname, currentUser.plan)) {
+  if (canAccessDashboardPath(pathname, currentUser.plan, currentUser.subscriptionStatus, currentUser.trialEndsAt)) {
     return <>{children}</>
   }
 

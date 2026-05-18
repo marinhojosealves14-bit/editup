@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { z } from "zod"
-import { enforceApiRateLimit, ensureSameOrigin, requireAdminAuthenticatedUser, sanitizeOptionalPlainText, sanitizePlainText } from "@/lib/api-admin"
+import { enforceApiRateLimit, ensureNotTrialRestricted, ensureSameOrigin, requireAdminAuthenticatedUser, sanitizeOptionalPlainText, sanitizePlainText } from "@/lib/api-admin"
 
 export const runtime = "nodejs"
 
@@ -43,6 +43,8 @@ export async function GET(request: NextRequest) {
     if (rateLimitError) return rateLimitError
 
     const { supabase, user } = await requireAdminAuthenticatedUser(request)
+    const trialRestricted = await ensureNotTrialRestricted(supabase, user.id, "/dashboard/exchange")
+    if (trialRestricted) return trialRestricted
     const id = request.nextUrl.searchParams.get("id")?.trim() ?? ""
     const query = request.nextUrl.searchParams.get("query")?.trim() ?? ""
     const hashtag = normalizeTag(request.nextUrl.searchParams.get("hashtag") ?? "")
@@ -131,6 +133,8 @@ export async function POST(request: NextRequest) {
     if (rateLimitError) return rateLimitError
 
     const { supabase, user } = await requireAdminAuthenticatedUser(request)
+    const trialRestricted = await ensureNotTrialRestricted(supabase, user.id, "/dashboard/exchange")
+    if (trialRestricted) return trialRestricted
     const body = resourceSchema.parse(await request.json())
     const hashtags = [...new Set(body.hashtags.map(normalizeTag).filter((tag) => allowedHashtags.includes(tag)))]
 

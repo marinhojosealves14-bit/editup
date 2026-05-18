@@ -21,8 +21,8 @@ const MINIMIZED_KEY = "editup-essential-onboarding-minimized"
 const baseTasks = [
   { id: "client", title: "Criar Cliente", href: "/dashboard/clientes" },
   { id: "schedule", title: "Criar Produção", href: "/dashboard/kanban" },
-  { id: "jobs", title: "Ver Vagas", href: "/dashboard/vagas" },
-  { id: "profile", title: "Editar Página Profissional", href: "/dashboard/perfil" },
+  { id: "quote", title: "Configurar Propostas", href: "/dashboard/orcamentos" },
+  { id: "profile", title: "Criar Portfólio", href: "/dashboard/perfil" },
   { id: "pack", title: "Ver Pack de Edição", href: "/dashboard/pack" },
 ] as const
 
@@ -56,7 +56,7 @@ export function FreeTrialTasksWidget() {
       if (!next.includes(id)) next.push(id)
     }
 
-    if (pathname === "/dashboard/vagas") add("jobs")
+    if (pathname === "/dashboard/orcamentos") add("quote")
     if (pathname === "/dashboard/perfil") add("profile")
     if (pathname === "/dashboard/pack") add("pack")
 
@@ -99,7 +99,7 @@ export function FreeTrialTasksWidget() {
           setMinimized(false)
         }}
         className="fixed bottom-5 right-5 z-50 flex h-12 w-12 items-center justify-center rounded-xl border border-border bg-card text-primary shadow-2xl"
-        aria-label="Abrir onboarding Essential"
+        aria-label="Abrir onboarding do teste grátis"
       >
         <ClipboardList className="h-5 w-5" />
       </button>
@@ -111,7 +111,7 @@ export function FreeTrialTasksWidget() {
       <Card className="border-border bg-card shadow-2xl">
         <CardHeader className="flex flex-row items-start justify-between space-y-0">
           <div>
-            <CardTitle className="text-base text-foreground">Essential Setup</CardTitle>
+            <CardTitle className="text-base text-foreground">Primeiros passos</CardTitle>
             <p className="mt-1 text-sm text-muted-foreground">{completedCount}/5 concluído</p>
           </div>
           <div className="flex gap-1">

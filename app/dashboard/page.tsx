@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { useEffect, useMemo, useState, type ComponentProps } from "react"
 import { useRouter } from "next/navigation"
-import { ArrowUpRight, BriefcaseBusiness, CalendarDays, CheckCircle2, Crown, RotateCcw, Wallet } from "lucide-react"
+import { ArrowUpRight, BriefcaseBusiness, CalendarDays, CheckCircle2, Crown, RotateCcw, Sparkles, Wallet } from "lucide-react"
 import {
   Bar,
   BarChart,
@@ -24,6 +24,7 @@ import { Progress } from "@/components/ui/progress"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { useAppSession } from "@/components/app/app-provider"
 import { useAppPreferences } from "@/components/app/preferences-provider"
+import { authFetch } from "@/lib/supabase"
 import { FeedbackBanner } from "@/components/dashboard/feedback-banner"
 import { PageEmptyState } from "@/components/dashboard/page-empty-state"
 import { PageLoadingState } from "@/components/dashboard/page-loading-state"
@@ -113,7 +114,7 @@ const DashboardCard = ({ className, ...props }: ComponentProps<typeof Card>) => 
 
 export default function DashboardPage() {
   const router = useRouter()
-  const { currentUser } = useAppSession()
+  const { currentUser, refreshCurrentUser } = useAppSession()
   const { formatCurrency, monthlyRevenueGoal } = useAppPreferences()
   const [tasks, setTasks] = useState<WorkspaceTask[]>([])
   const [clients, setClients] = useState<WorkspaceClient[]>([])
@@ -121,6 +122,7 @@ export default function DashboardPage() {
   const [fixedExpenses, setFixedExpenses] = useState<FixedExpense[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [feedbackError, setFeedbackError] = useState("")
+  const [isStartingTrial, setIsStartingTrial] = useState(false)
 
   useEffect(() => {
     if (!currentUser) return
@@ -294,6 +296,32 @@ export default function DashboardPage() {
     router.push(`/dashboard/kanban?taskId=${encodeURIComponent(taskId)}`)
   }
 
+  const trialEndsAt = currentUser.trialEndsAt ? new Date(currentUser.trialEndsAt) : null
+  const hasActiveTrial = currentUser.subscriptionStatus === "trialing" && trialEndsAt && trialEndsAt.getTime() > Date.now()
+  const hasExpiredTrial = currentUser.subscriptionStatus === "trialing" && trialEndsAt && trialEndsAt.getTime() <= Date.now()
+  const showTrialCta = (currentUser.plan === "free" || currentUser.plan === "starter") && currentUser.subscriptionStatus !== "active" && !hasExpiredTrial
+
+  const handleStartTrial = async () => {
+    try {
+      setIsStartingTrial(true)
+      setFeedbackError("")
+      const response = await authFetch("/api/free-trial", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({}),
+      })
+      const payload = (await response.json().catch(() => ({}))) as { error?: string }
+      if (!response.ok) {
+        throw new Error(payload.error ?? "Não foi possível iniciar o teste grátis.")
+      }
+      await refreshCurrentUser()
+    } catch (error) {
+      setFeedbackError(error instanceof Error ? error.message : "Não foi possível iniciar o teste grátis.")
+    } finally {
+      setIsStartingTrial(false)
+    }
+  }
+
   return (
     <div className="executive-dashboard space-y-5">
       <div className="flex flex-col justify-between gap-3 md:flex-row md:items-end">
@@ -307,6 +335,38 @@ export default function DashboardPage() {
       </div>
 
       <FeedbackBanner message={feedbackError} type="error" />
+      {(showTrialCta || hasActiveTrial || hasExpiredTrial) && (
+        <DashboardCard className="border-primary/35 bg-[radial-gradient(circle_at_top_right,rgba(0,34,254,0.14),transparent_35%),var(--exec-card)]">
+          <CardContent className="flex flex-col gap-4 p-5 md:flex-row md:items-center md:justify-between">
+            <div className="flex items-start gap-4">
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary text-primary-foreground">
+                <Sparkles className="h-5 w-5" />
+              </div>
+              <div>
+                <p className="font-semibold text-[var(--exec-text)]">
+                  {hasActiveTrial ? "Teste grátis Essential ativo" : hasExpiredTrial ? "Seu teste grátis terminou" : "Pegue 30 dias grátis do Essential"}
+                </p>
+                <p className="mt-1 max-w-2xl text-sm text-[var(--exec-muted)]">
+                  {hasActiveTrial
+                    ? `Você tem acesso ao CRM, propostas, financeiro, Drive e aprovações até ${trialEndsAt?.toLocaleDateString("pt-BR")}. Trocas e Vagas ficam bloqueadas no teste.`
+                    : hasExpiredTrial
+                      ? "Para manter CRM, propostas, financeiro, Drive e aprovações liberados, escolha um plano pago."
+                    : "Libere CRM, propostas, financeiro, Drive e aprovações por 30 dias. Depois do período, tudo volta para o Starter se você não assinar."}
+                </p>
+              </div>
+            </div>
+            {hasActiveTrial || hasExpiredTrial ? (
+              <Button onClick={() => router.push("/dashboard/planos")}>
+                {hasExpiredTrial ? "Ver planos" : "Assinar antes de expirar"}
+              </Button>
+            ) : (
+              <Button onClick={() => void handleStartTrial()} disabled={isStartingTrial}>
+                {isStartingTrial ? "Liberando..." : "Começar teste de 30 dias"}
+              </Button>
+            )}
+          </CardContent>
+        </DashboardCard>
+      )}
       {showCreativeCloudRedeem && (
         <DashboardCard className="border-[#0022fe]/40 bg-[radial-gradient(circle_at_top_right,rgba(0,34,254,0.18),transparent_32%),var(--exec-card)]">
           <CardContent className="flex flex-col gap-4 p-5 md:flex-row md:items-center md:justify-between">

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
+import { isTrialRestrictedDashboardPath } from "@/lib/app-data"
 
 type RateBucket = { count: number; resetAt: number }
 const rateLimitStore = new Map<string, RateBucket>()
@@ -47,6 +48,41 @@ export const requireAdminAuthenticatedUser = async (request: NextRequest) => {
   }
 
   return { supabase, user: data.user }
+}
+
+export const getUserAccessProfile = async (
+  supabase: ReturnType<typeof getSupabaseAdmin>,
+  userId: string
+) => {
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("plan,subscription_status,appearance_theme")
+    .eq("id", userId)
+    .maybeSingle()
+
+  if (error) {
+    throw new Error("Não foi possível validar seu plano.")
+  }
+
+  return data as { plan?: string | null; subscription_status?: string | null; appearance_theme?: unknown } | null
+}
+
+export const ensureNotTrialRestricted = async (
+  supabase: ReturnType<typeof getSupabaseAdmin>,
+  userId: string,
+  dashboardPath: string
+) => {
+  if (!isTrialRestrictedDashboardPath(dashboardPath)) return null
+
+  const profile = await getUserAccessProfile(supabase, userId)
+  if (profile?.subscription_status === "trialing") {
+    return NextResponse.json(
+      { error: "Trocas e Vagas ficam bloqueadas durante o teste grátis de 30 dias." },
+      { status: 403 }
+    )
+  }
+
+  return null
 }
 
 const normalizeOrigin = (value: string) => {

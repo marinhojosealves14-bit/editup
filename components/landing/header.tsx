@@ -48,7 +48,7 @@ export function Header() {
               </Link>
               <Link href="/cadastro">
                 <Button className="rounded-lg bg-[#0022fe] px-4 text-white shadow-sm hover:bg-[#001bd1]">
-                  Começar agora - grátis
+                  Começar teste grátis
                 </Button>
               </Link>
             </>
@@ -70,7 +70,7 @@ export function Header() {
             ))}
             <Link href={currentUser ? "/dashboard" : "/cadastro"} onClick={() => setMobileMenuOpen(false)}>
               <Button className="mt-2 h-12 w-full rounded-lg bg-[#0022fe] text-white hover:bg-[#001bd1]">
-                {currentUser ? "Ir para dashboard" : "Começar agora - grátis"}
+                {currentUser ? "Ir para dashboard" : "Começar teste grátis"}
               </Button>
             </Link>
           </nav>

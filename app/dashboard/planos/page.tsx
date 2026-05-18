@@ -66,8 +66,9 @@ const plans: Array<{
 
 export default function PlanosPage() {
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null)
+  const [isStartingTrial, setIsStartingTrial] = useState(false)
   const [message, setMessage] = useState("")
-  const { currentUser } = useAppSession()
+  const { currentUser, refreshCurrentUser } = useAppSession()
 
   if (!currentUser) return null
 
@@ -102,6 +103,28 @@ export default function PlanosPage() {
     window.location.href = data.url
   }
 
+  const handleStartTrial = async () => {
+    try {
+      setIsStartingTrial(true)
+      setMessage("")
+      const response = await authFetch("/api/free-trial", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({}),
+      })
+      const payload = (await response.json().catch(() => ({}))) as { error?: string }
+      if (!response.ok) {
+        throw new Error(payload.error ?? "Não foi possível iniciar o teste grátis.")
+      }
+      await refreshCurrentUser()
+      setMessage("Teste grátis de 30 dias ativado.")
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Não foi possível iniciar o teste grátis.")
+    } finally {
+      setIsStartingTrial(false)
+    }
+  }
+
   return (
     <div className="mx-auto max-w-5xl space-y-8">
       <div>
@@ -111,7 +134,8 @@ export default function PlanosPage() {
       </div>
 
       <Card className="border-primary/50 bg-gradient-to-r from-primary/10 to-primary/5">
-        <CardContent className="flex items-center gap-4 p-6">
+        <CardContent className="flex flex-col gap-4 p-6 md:flex-row md:items-center md:justify-between">
+          <div className="flex items-center gap-4">
           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/20">
             <Crown className="h-6 w-6 text-primary" />
           </div>
@@ -121,6 +145,12 @@ export default function PlanosPage() {
               Status da assinatura: {currentUser.subscriptionStatus === "active" ? "ativa" : currentUser.subscriptionStatus ?? "sem assinatura ativa"}.
             </p>
           </div>
+          </div>
+          {(currentUser.plan === "free" || currentUser.plan === "starter") && currentUser.subscriptionStatus !== "active" ? (
+            <Button onClick={() => void handleStartTrial()} disabled={isStartingTrial}>
+              {isStartingTrial ? "Liberando..." : "Ativar 30 dias grátis"}
+            </Button>
+          ) : null}
         </CardContent>
       </Card>
 

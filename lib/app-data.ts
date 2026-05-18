@@ -48,6 +48,7 @@ export interface AppUser {
   password: string
   plan: PlanId
   subscriptionStatus?: SubscriptionStatus
+  trialEndsAt?: string
   creativeCloudRedeemAvailableUntil?: string
   createdAt: string
   monthlyRevenueGoal?: number
@@ -135,6 +136,13 @@ const DASHBOARD_ACCESS_BY_PLAN: Record<PlanId, string[]> = {
   pro: ["/dashboard"],
 }
 
+export const TRIAL_DAYS = 30
+
+export const TRIAL_RESTRICTED_DASHBOARD_PATHS = [
+  "/dashboard/vagas",
+  "/dashboard/exchange",
+] as const
+
 export const EDIT_TOOL_LABELS: Record<EditTool, string> = {
   "adobe-premiere-pro": "Adobe Premiere Pro",
   photoshop: "Photoshop",
@@ -172,8 +180,40 @@ export const planMeets = (currentPlan: PlanId, requiredPlan: PlanId) => {
   return levels[currentPlan] >= levels[requiredPlan]
 }
 
-export const canAccessDashboardPath = (pathname: string, plan: PlanId) =>
-  DASHBOARD_ACCESS_BY_PLAN[plan].some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`))
+export const isTrialExpired = (trialEndsAt?: string) => {
+  if (!trialEndsAt) return false
+  const expiresAt = new Date(trialEndsAt).getTime()
+  return Number.isFinite(expiresAt) && expiresAt <= Date.now()
+}
+
+export const isTrialRestrictedDashboardPath = (pathname: string) =>
+  TRIAL_RESTRICTED_DASHBOARD_PATHS.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`))
+
+export const getEffectivePlanForAccess = (
+  plan: PlanId,
+  subscriptionStatus?: SubscriptionStatus,
+  trialEndsAt?: string
+): PlanId => {
+  if (subscriptionStatus === "trialing" && isTrialExpired(trialEndsAt)) {
+    return "free"
+  }
+
+  return plan
+}
+
+export const canAccessDashboardPath = (
+  pathname: string,
+  plan: PlanId,
+  subscriptionStatus?: SubscriptionStatus,
+  trialEndsAt?: string
+) => {
+  if (subscriptionStatus === "trialing" && isTrialRestrictedDashboardPath(pathname)) {
+    return false
+  }
+
+  const effectivePlan = getEffectivePlanForAccess(plan, subscriptionStatus, trialEndsAt)
+  return DASHBOARD_ACCESS_BY_PLAN[effectivePlan].some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`))
+}
 
 export const isPublisherEmail = (email: string) =>
   PUBLISHER_EMAILS.includes(email.toLowerCase() as (typeof PUBLISHER_EMAILS)[number])

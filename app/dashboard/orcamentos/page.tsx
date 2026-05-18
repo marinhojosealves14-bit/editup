@@ -288,14 +288,26 @@ export default function OrcamentosPage() {
   </main>
 </body>
 </html>`
+      const opened = window.open("", "_blank", "noopener,noreferrer")
+
+      if (opened) {
+        opened.document.open()
+        opened.document.write(proposalHtml)
+        opened.document.close()
+        return
+      }
+
       const blob = new Blob([proposalHtml], { type: "text/html;charset=utf-8" })
       const url = window.URL.createObjectURL(blob)
-      const opened = window.open(url, "_blank", "noopener,noreferrer")
+      const anchor = document.createElement("a")
+      anchor.href = url
+      anchor.download = `proposta-${quote.clientName.toLowerCase().replace(/[^a-z0-9]+/g, "-") || "cliente"}.html`
+      document.body.appendChild(anchor)
+      anchor.click()
+      anchor.remove()
       window.setTimeout(() => window.URL.revokeObjectURL(url), 60_000)
 
-      if (!opened) {
-        setError("O navegador bloqueou a abertura da proposta. Permita pop-ups para visualizar o link.")
-      }
+      setError("O navegador bloqueou a nova aba. Baixei a proposta em HTML para você abrir manualmente.")
     } catch (error) {
       setError(error instanceof Error ? error.message : "Não foi possível gerar a proposta.")
     }

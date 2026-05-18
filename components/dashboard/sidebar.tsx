@@ -213,7 +213,7 @@ export function DashboardSidebar() {
             {customOperationItems.map((item) => {
               const isActive = pathname === item.href
               const isLocked = isReady
-                ? (currentUser ? !canAccessDashboardPath(item.href, currentUser.plan) : true)
+                ? (currentUser ? !canAccessDashboardPath(item.href, currentUser.plan, currentUser.subscriptionStatus, currentUser.trialEndsAt) : true)
                 : false
 
               return (
@@ -279,7 +279,7 @@ export function DashboardSidebar() {
                   {customResourceItems.map((item) => {
                     const isActive = pathname === item.href
                     const isLocked = isReady
-                      ? (currentUser ? !canAccessDashboardPath(item.href, currentUser.plan) : true)
+                      ? (currentUser ? !canAccessDashboardPath(item.href, currentUser.plan, currentUser.subscriptionStatus, currentUser.trialEndsAt) : true)
                       : false
 
                     return (
@@ -334,7 +334,7 @@ export function DashboardSidebar() {
                   {courseItems.map((item) => {
                     const isActive = pathname === item.href
                     const isLocked = isReady
-                      ? (currentUser ? !canAccessDashboardPath(item.href, currentUser.plan) : true)
+                      ? (currentUser ? !canAccessDashboardPath(item.href, currentUser.plan, currentUser.subscriptionStatus, currentUser.trialEndsAt) : true)
                       : false
 
                     return (
@@ -371,7 +371,7 @@ export function DashboardSidebar() {
           <div className="border-t border-sidebar-border p-4">
             {currentUser ? (
               <div className="flex flex-col gap-2">
-                {!canAccessDashboardPath("/dashboard/financeiro", currentUser.plan) && (
+                {!canAccessDashboardPath("/dashboard/financeiro", currentUser.plan, currentUser.subscriptionStatus, currentUser.trialEndsAt) && (
                   <Button
                     type="button"
                     onClick={() => {

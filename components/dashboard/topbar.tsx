@@ -116,7 +116,7 @@ export function DashboardTopbar() {
 
   const availableItems = useMemo(
     () =>
-      dashboardNavItems.filter((item) => (currentUser ? canAccessDashboardPath(item.href, currentUser.plan) : false)),
+      dashboardNavItems.filter((item) => (currentUser ? canAccessDashboardPath(item.href, currentUser.plan, currentUser.subscriptionStatus, currentUser.trialEndsAt) : false)),
     [currentUser]
   )
 

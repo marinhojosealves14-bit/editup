@@ -50,7 +50,7 @@ export function Pricing() {
             Escolha o nível da sua operação.
           </h2>
           <p className="mt-4 text-base leading-7 text-[#6b7280]">
-            Comece grátis. Faça upgrade quando precisar baixar recursos, remover marca e controlar o financeiro.
+            Ative 30 dias grátis do Essential. Depois, assine para manter CRM, propostas, financeiro e aprovações liberados.
           </p>
         </motion.div>
 
@@ -95,7 +95,7 @@ export function Pricing() {
                     </ul>
                     <Link href={`/cadastro?plan=${plan.id}`} className="mt-7 block">
                       <Button className={`h-11 w-full rounded-lg ${plan.highlighted ? "bg-[#0022fe] text-white hover:bg-[#001bd1]" : "bg-[#111827] text-white hover:bg-[#0022fe]"}`}>
-                        {plan.id === "free" ? "Começar grátis" : "Escalar minha operação"}
+                        {plan.id === "free" ? "Começar teste grátis" : "Escalar minha operação"}
                       </Button>
                     </Link>
                   </div>

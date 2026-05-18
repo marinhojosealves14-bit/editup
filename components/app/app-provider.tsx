@@ -9,6 +9,7 @@ import {
   EditorProfile,
   getDefaultPlanForEmail,
   getDefaultPublishPermission,
+  getEffectivePlanForAccess,
   PlanId,
   isPublisherEmail,
   JobPost,
@@ -138,14 +139,20 @@ const mapProfileToAppUser = (profile: Record<string, unknown>): AppUser => {
     profile.subscription_status === "none"
       ? profile.subscription_status
       : "none"
+  const trialMeta = accountMeta?.trial && typeof accountMeta.trial === "object"
+    ? accountMeta.trial as Record<string, unknown>
+    : null
+  const trialEndsAt = typeof trialMeta?.endsAt === "string" ? trialMeta.endsAt : undefined
+  const effectivePlan = getEffectivePlanForAccess(normalizedPlan, normalizedSubscriptionStatus, trialEndsAt)
 
   return {
     id: String(profile.id),
     name: String(accountMeta?.name ?? profile.full_name ?? profile.email ?? "Editor"),
     email: String(profile.email ?? ""),
     password: "",
-    plan: normalizedPlan,
+    plan: effectivePlan,
     subscriptionStatus: normalizedSubscriptionStatus,
+    trialEndsAt,
     creativeCloudRedeemAvailableUntil: typeof profile.creative_cloud_redeem_available_until === "string" ? profile.creative_cloud_redeem_available_until : undefined,
     createdAt: String(profile.created_at ?? new Date().toISOString()),
     monthlyRevenueGoal: Number(profile.monthly_revenue_goal ?? 5000),

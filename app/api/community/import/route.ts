@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { z } from "zod"
-import { enforceApiRateLimit, ensureSameOrigin, requireAdminAuthenticatedUser, sanitizePlainText } from "@/lib/api-admin"
+import { enforceApiRateLimit, ensureNotTrialRestricted, ensureSameOrigin, requireAdminAuthenticatedUser, sanitizePlainText } from "@/lib/api-admin"
 import { createDriveFolderShortcut } from "@/lib/google-drive"
 import { planMeets, type PlanId } from "@/lib/app-data"
 
@@ -18,6 +18,8 @@ export async function POST(request: NextRequest) {
     if (rateLimitError) return rateLimitError
 
     const { supabase, user } = await requireAdminAuthenticatedUser(request)
+    const trialRestricted = await ensureNotTrialRestricted(supabase, user.id, "/dashboard/exchange")
+    if (trialRestricted) return trialRestricted
     const body = schema.parse(await request.json())
     const { data: profile } = await supabase
       .from("profiles")

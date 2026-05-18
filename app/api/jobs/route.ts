@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { z } from "zod"
-import { enforceApiRateLimit, ensureSameOrigin, requireAdminAuthenticatedUser, sanitizePlainText } from "@/lib/api-admin"
+import { enforceApiRateLimit, ensureNotTrialRestricted, ensureSameOrigin, requireAdminAuthenticatedUser, sanitizePlainText } from "@/lib/api-admin"
 import { serializeJobDescription } from "@/lib/app-data"
 
 export const runtime = "nodejs"
@@ -30,7 +30,9 @@ const deleteJobSchema = z.object({
 
 export async function GET(request: NextRequest) {
   try {
-    const { supabase } = await requireAdminAuthenticatedUser(request)
+    const { supabase, user } = await requireAdminAuthenticatedUser(request)
+    const trialRestricted = await ensureNotTrialRestricted(supabase, user.id, "/dashboard/vagas")
+    if (trialRestricted) return trialRestricted
     const { data, error } = await supabase.from("job_posts").select(jobColumns).order("created_at", { ascending: false })
 
     if (error) {
@@ -52,6 +54,8 @@ export async function POST(request: NextRequest) {
     if (rateLimitError) return rateLimitError
 
     const { supabase, user } = await requireAdminAuthenticatedUser(request)
+    const trialRestricted = await ensureNotTrialRestricted(supabase, user.id, "/dashboard/vagas")
+    if (trialRestricted) return trialRestricted
     const body = createJobSchema.parse((await request.json()) as Record<string, unknown>)
     const payload = {
       title: sanitizePlainText(body.title),
@@ -96,6 +100,8 @@ export async function PATCH(request: NextRequest) {
     if (rateLimitError) return rateLimitError
 
     const { supabase, user } = await requireAdminAuthenticatedUser(request)
+    const trialRestricted = await ensureNotTrialRestricted(supabase, user.id, "/dashboard/vagas")
+    if (trialRestricted) return trialRestricted
     const { id, status } = updateJobSchema.parse((await request.json()) as { id?: string; status?: string })
 
     const { data, error } = await supabase
@@ -132,6 +138,8 @@ export async function DELETE(request: NextRequest) {
     if (rateLimitError) return rateLimitError
 
     const { supabase, user } = await requireAdminAuthenticatedUser(request)
+    const trialRestricted = await ensureNotTrialRestricted(supabase, user.id, "/dashboard/vagas")
+    if (trialRestricted) return trialRestricted
     const { id } = deleteJobSchema.parse(await request.json())
 
     const { data, error } = await supabase

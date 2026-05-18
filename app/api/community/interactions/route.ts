@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { z } from "zod"
-import { enforceApiRateLimit, ensureSameOrigin, requireAdminAuthenticatedUser } from "@/lib/api-admin"
+import { enforceApiRateLimit, ensureNotTrialRestricted, ensureSameOrigin, requireAdminAuthenticatedUser } from "@/lib/api-admin"
 
 export const runtime = "nodejs"
 
@@ -17,6 +17,8 @@ export async function PATCH(request: NextRequest) {
     if (rateLimitError) return rateLimitError
 
     const { supabase, user } = await requireAdminAuthenticatedUser(request)
+    const trialRestricted = await ensureNotTrialRestricted(supabase, user.id, "/dashboard/exchange")
+    if (trialRestricted) return trialRestricted
     const body = schema.parse(await request.json())
 
     if (body.type === null) {

@@ -31,11 +31,11 @@ export function Hero() {
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link href="/cadastro">
               <Button className="h-12 rounded-lg bg-[#0022fe] px-6 text-base font-semibold text-white hover:bg-[#001bd1]">
-                Começar agora - grátis
+                Começar teste grátis
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
-            <p className="text-sm text-[#6b7280]">Leva menos de 2 minutos. Sem cartão.</p>
+            <p className="text-sm text-[#6b7280]">30 dias grátis. Sem cartão no cadastro.</p>
           </div>
         </motion.div>
 

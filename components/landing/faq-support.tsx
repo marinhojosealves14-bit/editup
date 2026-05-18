@@ -81,11 +81,11 @@ export function FaqSupport() {
             Pronto para parar de gerenciar cliente no improviso?
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-base leading-7 text-white/68">
-            Crie sua conta grátis e monte sua primeira operação em poucos minutos.
+            Crie sua conta e ative 30 dias grátis e monte sua primeira operação em poucos minutos.
           </p>
           <Link href="/cadastro" className="mt-8 inline-flex">
             <Button className="h-12 rounded-lg bg-[#0022fe] px-6 text-base font-semibold text-white hover:bg-[#2444ff]">
-              Começar agora - grátis
+              Começar teste grátis
             </Button>
           </Link>
         </motion.div>
