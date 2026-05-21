@@ -31,7 +31,7 @@ export function Testimonials() {
             <span className="text-primary">operar melhor</span>
           </h2>
           <p className="text-muted-foreground">
-            A EditUp organiza a parte invisível do trabalho: proposta, cliente, produção, aprovação e recebimento.
+            A Mallow organiza a parte invisível do trabalho: proposta, cliente, produção, aprovação e recebimento.
           </p>
         </div>
 

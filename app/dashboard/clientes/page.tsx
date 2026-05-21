@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Plus, User, Phone, Link2, MoreVertical, Pencil, Trash2, ArrowRight } from "lucide-react"
+import { Plus, User, Phone, Link2, MoreVertical, Pencil, Trash2, ArrowRight, Search, Grid2X2, List } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { useAppSession } from "@/components/app/app-provider"
 import { FeedbackBanner } from "@/components/dashboard/feedback-banner"
@@ -96,6 +96,7 @@ export default function ClientesPage() {
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editingCliente, setEditingCliente] = useState<WorkspaceClient | null>(null)
   const [formData, setFormData] = useState(defaultFormData)
+  const [searchTerm, setSearchTerm] = useState("")
 
   useEffect(() => {
     if (!currentUser) return
@@ -233,22 +234,31 @@ export default function ClientesPage() {
   }
 
   const paisSelecionado = paises.find((pais) => pais.codigo === formData.codigoPais)
+  const clientesVisiveis = clientes.filter((cliente) => {
+    const query = searchTerm.trim().toLowerCase()
+    if (!query) return true
+    const profile = cliente.perfilOperacional ?? createDefaultClientProfile()
+    return [cliente.nome, cliente.telefone, cliente.linkDrive, cliente.driveFolderName, profile.tipoConteudo, profile.observacoes]
+      .filter(Boolean)
+      .some((value) => String(value).toLowerCase().includes(query))
+  })
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground">Clientes</h1>
-          <p className="mt-1 text-muted-foreground">
-            Um CRM enxuto para organizar quem envia material, quanto esforço cada cliente exige e onde o trabalho vive.
-          </p>
-        </div>
-        <div className="rounded-2xl border border-border bg-background/70 px-4 py-3 text-sm text-muted-foreground">
-          Cada cliente agora funciona como uma memória operacional do seu fluxo.
-        </div>
+    <div className="rounded-[18px] bg-card px-6 py-6 shadow-none sm:px-8">
+      <div className="border-b border-border pb-8">
+        <h1 className="text-[32px] font-medium leading-none tracking-[-0.055em] text-foreground sm:text-[36px]">Seus Clientes</h1>
       </div>
 
-      <div className="flex items-center justify-end">
+      <div className="flex flex-col gap-4 py-5 md:flex-row md:items-center md:justify-between">
+        <div className="relative w-full max-w-[360px]">
+          <Input
+            value={searchTerm}
+            onChange={(event) => setSearchTerm(event.target.value)}
+            placeholder="Pesquisar"
+            className="h-11 rounded-[8px] border-border bg-secondary/50 pl-4 pr-11 text-[15px] font-medium tracking-[-0.035em] text-foreground shadow-none placeholder:text-muted-foreground"
+          />
+          <Search className="pointer-events-none absolute right-3.5 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
+        </div>
         <Dialog
           open={dialogOpen}
           onOpenChange={(open) => {
@@ -256,12 +266,22 @@ export default function ClientesPage() {
             if (!open) resetForm()
           }}
         >
-          <DialogTrigger asChild>
-            <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
-              <Plus className="w-4 h-4 mr-2" />
-              Novo cliente
-            </Button>
-          </DialogTrigger>
+          <div className="flex items-center justify-end gap-2">
+            <div className="flex h-11 items-center rounded-[8px] border border-border bg-secondary/60 p-1 text-muted-foreground">
+              <button type="button" className="flex h-9 w-9 items-center justify-center rounded-[7px] bg-card text-foreground shadow-sm" aria-label="Visualização em cards">
+                <Grid2X2 className="h-5 w-5" />
+              </button>
+              <button type="button" className="flex h-9 w-9 items-center justify-center rounded-[7px]" aria-label="Visualização em lista">
+                <List className="h-5 w-5" />
+              </button>
+            </div>
+            <DialogTrigger asChild>
+              <Button className="h-11 rounded-[8px] bg-primary px-4 text-[15px] font-medium tracking-[-0.04em] text-primary-foreground hover:bg-primary/90">
+                <Plus className="h-5 w-5" />
+                Novo
+              </Button>
+            </DialogTrigger>
+          </div>
           <DialogContent className="max-w-2xl">
             <DialogHeader>
               <DialogTitle className="text-foreground">{editingCliente ? "Editar cliente" : "Novo cliente"}</DialogTitle>
@@ -413,9 +433,11 @@ export default function ClientesPage() {
         <PageLoadingState title="Carregando clientes" description="Estamos trazendo sua lista para você continuar o fluxo sem perder contexto." />
       ) : clientes.length === 0 ? (
         <PageEmptyState icon={<User className="h-7 w-7" />} title="Ainda não há clientes" description="Adicione o primeiro cliente e vincule cada nova entrega a ele na Produção." actionLabel="Adicionar cliente" onAction={() => setDialogOpen(true)} />
+      ) : clientesVisiveis.length === 0 ? (
+        <PageEmptyState icon={<Search className="h-7 w-7" />} title="Nenhum cliente encontrado" description="Tente buscar por outro nome, telefone ou tipo de conteúdo." />
       ) : (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {clientes.map((cliente) => {
+        <div className="grid gap-4 pt-1 md:grid-cols-2 lg:grid-cols-3">
+          {clientesVisiveis.map((cliente) => {
             const profile = cliente.perfilOperacional ?? createDefaultClientProfile()
 
             return (

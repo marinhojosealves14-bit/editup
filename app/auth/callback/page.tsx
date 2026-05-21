@@ -80,7 +80,7 @@ function AuthCallbackContent() {
           <>
             <Loader2 className="mx-auto h-8 w-8 animate-spin text-primary" />
             <h1 className="mt-4 text-xl font-semibold">Finalizando seu login</h1>
-            <p className="mt-2 text-sm text-muted-foreground">Estamos conectando sua conta Google à EditUp.</p>
+            <p className="mt-2 text-sm text-muted-foreground">Estamos conectando sua conta Google à Mallow.</p>
           </>
         )}
       </section>

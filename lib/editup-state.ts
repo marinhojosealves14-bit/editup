@@ -19,16 +19,29 @@ export type UserSystemNotification = {
   read: boolean
 }
 
+export type ProductSuggestion = {
+  id: string
+  userId: string
+  author: string
+  email: string
+  title: string
+  category: string
+  message: string
+  createdAt: string
+}
+
 export type EditUpState = {
   freeTrialClaimedEmails: string[]
   broadcasts: BroadcastNotification[]
   userNotifications: UserSystemNotification[]
+  productSuggestions: ProductSuggestion[]
 }
 
 const defaultState = (): EditUpState => ({
   freeTrialClaimedEmails: [],
   broadcasts: [],
   userNotifications: [],
+  productSuggestions: [],
 })
 
 const stateDir = path.join(process.cwd(), "data")
@@ -66,6 +79,21 @@ export const readEditUpState = async () => {
               (item.kind === "approval-expired" || item.kind === "drive" || item.kind === "system") &&
               typeof item.createdAt === "string" &&
               typeof item.read === "boolean"
+          )
+        : [],
+      productSuggestions: Array.isArray(parsed.productSuggestions)
+        ? parsed.productSuggestions.filter(
+            (item): item is ProductSuggestion =>
+              !!item &&
+              typeof item === "object" &&
+              typeof item.id === "string" &&
+              typeof item.userId === "string" &&
+              typeof item.author === "string" &&
+              typeof item.email === "string" &&
+              typeof item.title === "string" &&
+              typeof item.category === "string" &&
+              typeof item.message === "string" &&
+              typeof item.createdAt === "string"
           )
         : [],
     }

@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
       }
 
       if (alreadyClaimedTrial) {
-        return NextResponse.json({ error: "Este email já usou o teste grátis de 30 dias." }, { status: 403 })
+        return NextResponse.json({ error: "Este email já usou o teste grátis de 15 dias." }, { status: 403 })
       }
 
       const nextAppearanceTheme = {

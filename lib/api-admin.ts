@@ -77,7 +77,7 @@ export const ensureNotTrialRestricted = async (
   const profile = await getUserAccessProfile(supabase, userId)
   if (profile?.subscription_status === "trialing") {
     return NextResponse.json(
-      { error: "Trocas e Vagas ficam bloqueadas durante o teste grátis de 30 dias." },
+      { error: "Trocas e Vagas ficam bloqueadas durante o teste grátis de 15 dias." },
       { status: 403 }
     )
   }

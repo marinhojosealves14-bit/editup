@@ -8,7 +8,7 @@ import { getStripe, stripePrices } from "@/lib/stripe"
 export const runtime = "nodejs"
 
 const checkoutSchema = z.object({
-  plan: z.enum(["essential", "pro"]),
+  plan: z.enum(["starter", "essential", "pro"]),
 })
 
 export async function POST(request: NextRequest) {

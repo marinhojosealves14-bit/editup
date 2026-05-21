@@ -23,5 +23,5 @@ export const stripePrices = {
 }
 
 export const isStripeConfigured = Boolean(
-  secretKey && stripePrices.essential && stripePrices.pro
+  secretKey && stripePrices.starter && stripePrices.essential && stripePrices.pro
 )

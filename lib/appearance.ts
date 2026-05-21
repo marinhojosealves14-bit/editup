@@ -13,58 +13,22 @@ export const APPEARANCE_SAVED_STORAGE_KEY = "editup-saved-appearance-themes"
 
 export const builtInAppearanceThemes: AppearanceTheme[] = [
   {
-    id: "notion-workspace",
-    name: "Notion Workspace",
-    background: "#F7F6F3",
-    sidebar: "#FBFBFA",
+    id: "light",
+    name: "Claro",
+    background: "#F5F7FB",
+    sidebar: "#F8FAFC",
     surface: "#FFFFFF",
-    text: "#2F3437",
-    accent: "#37352F",
+    text: "#111827",
+    accent: "#9DE96C",
   },
   {
-    id: "midnight-vanta",
-    name: "Notion Dark",
-    background: "#191919",
-    sidebar: "#202020",
-    surface: "#202020",
-    text: "#EDEDEB",
-    accent: "#EDEDEB",
-  },
-  {
-    id: "light-neve",
-    name: "Notion Light",
-    background: "#FFFFFF",
-    sidebar: "#FBFBFA",
-    surface: "#FFFFFF",
-    text: "#2F3437",
-    accent: "#37352F",
-  },
-  {
-    id: "discord-classic",
-    name: "Graphite",
-    background: "#F1F1EF",
-    sidebar: "#EDECE9",
-    surface: "#FFFFFF",
-    text: "#37352F",
-    accent: "#5F5E5A",
-  },
-  {
-    id: "forest-sereno",
-    name: "Sage",
-    background: "#F4F6F1",
-    sidebar: "#EEF2EA",
-    surface: "#FFFFFF",
-    text: "#2F3A31",
-    accent: "#5F6F52",
-  },
-  {
-    id: "cyberpunk-neon",
-    name: "Warm Paper",
-    background: "#F8F5F0",
-    sidebar: "#F1EDE6",
-    surface: "#FFFFFF",
-    text: "#3B332B",
-    accent: "#8A6F4D",
+    id: "dark",
+    name: "Escuro",
+    background: "#0B0E14",
+    sidebar: "#10151D",
+    surface: "#151A23",
+    text: "#F8FAFC",
+    accent: "#9DE96C",
   },
 ]
 
@@ -132,35 +96,14 @@ const getContrastRatio = (first: string, second: string) => {
 const ensureReadableText = (background: string, preferredText: string) =>
   getContrastRatio(background, preferredText) >= 4.5 ? preferredText : getContrastText(background)
 
-const isLegacyVantaTheme = (theme: AppearanceTheme) =>
-  theme.id?.trim() === "midnight-vanta" &&
-  (
-    theme.name?.toLocaleLowerCase("pt-BR").includes("vanta") ||
-    theme.background?.trim().toLowerCase() === "#000000" ||
-    theme.sidebar?.trim().toLowerCase() === "#050505" ||
-    theme.surface?.trim().toLowerCase() === "#0a0a0a" ||
-    theme.accent?.trim().toLowerCase() === "#0022fe"
-  )
-
 export const normalizeAppearanceTheme = (theme: AppearanceTheme): AppearanceTheme => {
-  if (isLegacyVantaTheme(theme)) {
-    return builtInAppearanceThemes[0]
+  const id = theme.id?.trim()
+
+  if (id === "dark" || id === "midnight-vanta") {
+    return builtInAppearanceThemes[1]
   }
 
-  const id = theme.id?.trim() || "custom"
-  const builtIn = builtInAppearanceThemes.find((item) => item.id === id)
-
-  if (builtIn) return builtIn
-
-  return {
-    id,
-    name: theme.name?.trim() || "Custom theme",
-    background: theme.background?.trim() || "#F7F6F3",
-    sidebar: theme.sidebar?.trim() || "#FBFBFA",
-    surface: theme.surface?.trim() || "#FFFFFF",
-    text: theme.text?.trim() || "#2F3437",
-    accent: theme.accent?.trim() || "#37352F",
-  }
+  return builtInAppearanceThemes[0]
 }
 
 export const applyAppearanceTheme = (theme: AppearanceTheme) => {
@@ -168,7 +111,7 @@ export const applyAppearanceTheme = (theme: AppearanceTheme) => {
 
   const normalized = normalizeAppearanceTheme(theme)
   const root = document.documentElement
-  root.classList.remove("dark")
+  root.classList.toggle("dark", normalized.id === "dark")
   root.dataset.appearanceTheme = normalized.id
   const backgroundText = ensureReadableText(normalized.background, normalized.text)
   const surfaceText = ensureReadableText(normalized.surface, normalized.text)

@@ -273,7 +273,7 @@ export default function OrcamentosPage() {
 </head>
 <body>
   <main>
-    <img src="${window.location.origin}/logo.jpeg" alt="EditUp" />
+    <img src="${window.location.origin}/logo.png" alt="Mallow" />
     <h1>Proposta de edição de vídeo</h1>
     <p class="muted">Resumo profissional gerado a partir do orçamento solicitado por ${escapeHtml(quote.clientName)}.</p>
     ${editorMessage ? `<p class="muted" style="border-left: 3px solid #37352F; padding-left: 14px;">${escapeHtml(editorMessage)}</p>` : ""}

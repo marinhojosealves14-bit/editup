@@ -151,7 +151,7 @@ const categories: PackCategory[] = ["Todos", "Vídeos brutos", "Sound Effects", 
 const buildResourceFile = (resource: PackResource) =>
   new File(
     [
-      `EditUp Editing Pack\n\nRecurso: ${resource.title}\nCategoria: ${resource.category}\nLink: ${resource.url ?? "Em breve"}\n\n${resource.description}\n`,
+      `Mallow Editing Pack\n\nRecurso: ${resource.title}\nCategoria: ${resource.category}\nLink: ${resource.url ?? "Em breve"}\n\n${resource.description}\n`,
     ],
     `${resource.id}.txt`,
     { type: "text/plain" }

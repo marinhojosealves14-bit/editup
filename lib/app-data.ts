@@ -114,6 +114,7 @@ const DASHBOARD_ACCESS_BY_PLAN: Record<PlanId, string[]> = {
     "/dashboard/kanban",
     "/dashboard/clientes",
     "/dashboard/perfil",
+    "/dashboard/sugestoes",
     "/dashboard/calculadora",
     "/dashboard/pack",
     "/dashboard/exchange",
@@ -125,6 +126,7 @@ const DASHBOARD_ACCESS_BY_PLAN: Record<PlanId, string[]> = {
     "/dashboard/kanban",
     "/dashboard/clientes",
     "/dashboard/perfil",
+    "/dashboard/sugestoes",
     "/dashboard/calculadora",
     "/dashboard/pack",
     "/dashboard/exchange",
@@ -136,7 +138,7 @@ const DASHBOARD_ACCESS_BY_PLAN: Record<PlanId, string[]> = {
   pro: ["/dashboard"],
 }
 
-export const TRIAL_DAYS = 30
+export const TRIAL_DAYS = 15
 
 export const TRIAL_RESTRICTED_DASHBOARD_PATHS = [
   "/dashboard/vagas",

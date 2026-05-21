@@ -1,17 +1,16 @@
 "use client"
 
 import Link from "next/link"
-import { Menu, X } from "lucide-react"
+import { ArrowRight, ChevronDown, Menu, X } from "lucide-react"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { useAppSession } from "@/components/app/app-provider"
 
 const navItems = [
-  ["Dor e solução", "#pain"],
-  ["Funcionalidades", "#features"],
-  ["Depoimentos", "#proof"],
+  ["Produtos", "#features"],
+  ["Soluções", "#pain"],
+  ["Recursos", "#proof"],
   ["Preços", "#pricing"],
-  ["FAQ", "#faq"],
 ] as const
 
 export function Header() {
@@ -19,40 +18,37 @@ export function Header() {
   const { currentUser } = useAppSession()
 
   return (
-    <header className="sticky top-0 z-50 border-b border-[#e5e7eb] bg-white/86 backdrop-blur-xl">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
+    <header className="sticky top-0 z-50 border-b border-[#e3e9ef] bg-white/92 backdrop-blur-xl">
+      <div className="mx-auto flex h-[86px] max-w-[1360px] items-center justify-between px-5 sm:px-8">
         <Link href="/" className="flex items-center gap-3">
-          <span className="flex h-9 w-9 overflow-hidden rounded-lg border border-[#e5e7eb] bg-white">
-            <img src="/logo.jpeg" alt="EditUp" className="h-full w-full object-cover" />
+          <span className="flex h-10 w-10 overflow-hidden rounded-[10px] bg-white">
+            <img src="/logo.png" alt="Mallow" className="h-full w-full object-contain" />
           </span>
-          <span className="text-sm font-semibold tracking-[-0.02em] text-[#111827]">EditUp</span>
+          <span className="text-[18px] font-semibold tracking-[-0.04em] text-[#254342]">Mallow</span>
         </Link>
 
-        <nav className="hidden items-center gap-6 md:flex">
-          {navItems.map(([label, href]) => (
-            <Link key={href} href={href} className="text-sm font-medium text-[#6b7280] transition-colors hover:text-[#111827]">
+        <nav className="hidden items-center gap-10 md:flex">
+          {navItems.map(([label, href], index) => (
+            <Link key={href} href={href} className="inline-flex items-center gap-1.5 text-[15px] font-semibold tracking-[-0.035em] text-[#254342] transition-colors hover:text-[#62bd36]">
               {label}
+              {index < 3 ? <ChevronDown className="h-3.5 w-3.5" /> : null}
             </Link>
           ))}
         </nav>
 
-        <div className="hidden items-center gap-3 md:flex">
-          {currentUser ? (
-            <Link href="/dashboard">
-              <Button className="rounded-lg bg-[#111827] px-4 text-white hover:bg-[#0022fe]">Ir para dashboard</Button>
+        <div className="hidden items-center gap-4 md:flex">
+          <div className="h-11 w-px bg-[#e3e9ef]" />
+          <Link href={currentUser ? "/dashboard" : "/cadastro"}>
+            <Button className="h-12 rounded-full bg-[#9de96c] px-6 text-[15px] font-semibold tracking-[-0.04em] text-[#21351f] shadow-none hover:bg-[#8bdd5c]">
+              {currentUser ? "Acessar Plataforma" : "Começar agora"}
+              <ArrowRight className="h-4 w-4" />
+            </Button>
+          </Link>
+          {!currentUser ? (
+            <Link href="/login" className="text-[15px] font-semibold tracking-[-0.035em] text-[#254342] hover:text-[#62bd36]">
+              Entrar
             </Link>
-          ) : (
-            <>
-              <Link href="/login" className="text-sm font-medium text-[#6b7280] hover:text-[#111827]">
-                Entrar
-              </Link>
-              <Link href="/cadastro">
-                <Button className="rounded-lg bg-[#0022fe] px-4 text-white shadow-sm hover:bg-[#001bd1]">
-                  Começar teste grátis
-                </Button>
-              </Link>
-            </>
-          )}
+          ) : null}
         </div>
 
         <button className="md:hidden" onClick={() => setMobileMenuOpen((current) => !current)} aria-label="Abrir menu">
@@ -61,16 +57,16 @@ export function Header() {
       </div>
 
       {mobileMenuOpen && (
-        <div className="border-t border-[#e5e7eb] bg-white px-4 py-4 md:hidden">
+        <div className="border-t border-[#e3e9ef] bg-white px-5 py-4 md:hidden">
           <nav className="flex flex-col gap-3">
             {navItems.map(([label, href]) => (
-              <Link key={href} href={href} className="py-2 text-sm font-medium text-[#374151]" onClick={() => setMobileMenuOpen(false)}>
+              <Link key={href} href={href} className="py-2 text-sm font-semibold text-[#254342]" onClick={() => setMobileMenuOpen(false)}>
                 {label}
               </Link>
             ))}
             <Link href={currentUser ? "/dashboard" : "/cadastro"} onClick={() => setMobileMenuOpen(false)}>
-              <Button className="mt-2 h-12 w-full rounded-lg bg-[#0022fe] text-white hover:bg-[#001bd1]">
-                {currentUser ? "Ir para dashboard" : "Começar teste grátis"}
+              <Button className="mt-2 h-12 w-full rounded-full bg-[#9de96c] text-[#21351f] hover:bg-[#8bdd5c]">
+                {currentUser ? "Acessar Plataforma" : "Começar agora"}
               </Button>
             </Link>
           </nav>

@@ -85,7 +85,7 @@ const sectionGroups: Array<{
   {
     title: "Configurações do App",
     items: [
-      { id: "appearance", label: "Aparência", icon: Palette, keywords: "tema cores light discord midnight forest cyberpunk" },
+      { id: "appearance", label: "Aparência", icon: Palette, keywords: "tema cores claro escuro light dark" },
       { id: "accessibility", label: "Acessibilidade", icon: SlidersHorizontal, keywords: "fonte movimento saturação leitor tela aria" },
       { id: "language-time", label: "Idioma e hora", icon: Globe2, keywords: "idioma tempo language time 12 24 auto" },
       { id: "plans", label: "Minha Assinatura", icon: CreditCard, keywords: "plano assinatura billing transações pagamento creative cloud adobe" },
@@ -356,7 +356,7 @@ export default function ConfiguracoesPage() {
             <Card className="border-border bg-card">
               <CardHeader>
                 <CardTitle>Conta</CardTitle>
-                <CardDescription>Dados principais da sua conta EditUp.</CardDescription>
+                <CardDescription>Dados principais da sua conta Mallow.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-5">
                 <div className="flex items-center gap-4">
@@ -566,7 +566,7 @@ export default function ConfiguracoesPage() {
             <Card className="border-border bg-card">
               <CardHeader>
                 <CardTitle>Aparência</CardTitle>
-                <CardDescription>Clique em um tema para aplicar instantaneamente.</CardDescription>
+                <CardDescription>Escolha apenas entre modo claro e modo escuro.</CardDescription>
               </CardHeader>
               <CardContent className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
                 {builtInAppearanceThemes.map((preset) => (
@@ -583,7 +583,9 @@ export default function ConfiguracoesPage() {
                       ))}
                     </div>
                     <p className="text-sm font-semibold text-foreground">{preset.name}</p>
-                    <p className="mt-1 text-xs text-muted-foreground">{preset.background} • {preset.accent}</p>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      {preset.id === "light" ? "Interface clara e limpa." : "Interface escura e focada."}
+                    </p>
                   </button>
                 ))}
               </CardContent>
@@ -718,7 +720,7 @@ export default function ConfiguracoesPage() {
                           <p className="mt-2">Prazo de resgate: {creativeCloudRedeemExpiresAt.toLocaleDateString("pt-BR")}.</p>
                         )}
                       </div>
-                      <Button className="mt-4" disabled={!canRedeemCreativeCloud} onClick={() => window.open("mailto:editupsupport@gmail.com?subject=Resgate%20Creative%20Cloud%20Pro%20EditUp", "_blank")}>
+                      <Button className="mt-4" disabled={!canRedeemCreativeCloud} onClick={() => window.open("mailto:mallowdigital@yahoo.com?subject=Resgate%20Creative%20Cloud%20Pro%20Mallow", "_blank")}>
                         Resgatar acesso
                       </Button>
                     </div>
@@ -763,7 +765,7 @@ export default function ConfiguracoesPage() {
             <Card className="border-border bg-card">
               <CardHeader>
                 <CardTitle>Sair</CardTitle>
-                <CardDescription>Encerrar sua sessão atual na EditUp.</CardDescription>
+                <CardDescription>Encerrar sua sessão atual na Mallow.</CardDescription>
               </CardHeader>
               <CardContent>
                 <Button variant="destructive" className="gap-2" onClick={() => setLogoutDialogOpen(true)}>

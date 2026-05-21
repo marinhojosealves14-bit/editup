@@ -114,7 +114,7 @@ export default function CalculadoraPage() {
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8" />
-  <title>Proposta EditUp</title>
+  <title>Proposta Mallow</title>
   <style>
     body { font-family: Inter, ui-sans-serif, system-ui, sans-serif; margin: 0; background: #f7f8fb; color: #111827; }
     main { max-width: 760px; margin: 40px auto; background: white; border: 1px solid #e5e7eb; border-radius: 18px; padding: 32px; }
@@ -130,9 +130,9 @@ export default function CalculadoraPage() {
 </head>
 <body>
   <main>
-    <img src="${window.location.origin}/logo.jpeg" alt="EditUp" />
+    <img src="${window.location.origin}/logo.png" alt="Mallow" />
     <h1>Proposta de edição de vídeo</h1>
-    <p>Escopo sugerido a partir da calculadora profissional da EditUp.</p>
+    <p>Escopo sugerido a partir da calculadora profissional da Mallow.</p>
     <div class="price">${formatPrice(calculatedPrice.recommended)}</div>
     <div class="grid">
       <div class="item"><div class="label">Tipo</div><div class="value">${selectedVideo.name}</div></div>

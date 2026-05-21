@@ -123,7 +123,7 @@ export function DrivePickerButton({ mode, onPick, disabled, className }: DrivePi
         <DialogContent className="max-h-[82vh] max-w-3xl overflow-hidden border-border bg-card p-0">
           <DialogHeader className="border-b border-border px-5 py-4">
             <DialogTitle>{mode === "folder" ? "Selecionar pasta" : "Selecionar vídeo"}</DialogTitle>
-            <DialogDescription>Escolha direto pelo Drive conectado ao EditUp.</DialogDescription>
+            <DialogDescription>Escolha direto pelo Drive conectado ao Mallow.</DialogDescription>
           </DialogHeader>
           <div className="flex flex-wrap items-center gap-1 border-b border-border px-5 py-3 text-sm text-muted-foreground">
             {breadcrumbs.map((item, index) => (

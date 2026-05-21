@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
     const shortcut = await createDriveFolderShortcut({
       userId: user.id,
       folderId: resource.drive_folder_id,
-      name: sanitizePlainText(`EditUp - ${resource.drive_folder_name || resource.title}`),
+      name: sanitizePlainText(`Mallow - ${resource.drive_folder_name || resource.title}`),
     })
 
     return NextResponse.json({ file: shortcut })

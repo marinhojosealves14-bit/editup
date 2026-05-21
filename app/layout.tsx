@@ -15,13 +15,13 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: 'EditUp - Plataforma para editores de vídeo',
+  title: 'Mallow - Plataforma para editores de vídeo',
   description: 'Workspace para editores de vídeo com orçamentos, CRM, produção, financeiro, Drive e aprovações profissionais.',
   metadataBase: new URL(getSiteUrl()),
   icons: {
-    icon: '/favicon.svg',
-    shortcut: '/favicon.svg',
-    apple: '/favicon.svg',
+    icon: '/logo.png',
+    shortcut: '/logo.png',
+    apple: '/logo.png',
   },
 }
 

@@ -12,12 +12,13 @@ import { authFetch, supabase } from "@/lib/supabase"
 
 const messages = {
   pt: {
-    dashboard: "Hoje",
+    dashboard: "Dashboard",
     clients: "Clientes",
-    schedule: "Produção",
+    schedule: "Agenda",
     notifications: "Notificações",
-    quotes: "Propostas",
-    finance: "Receita",
+    suggestions: "Sugestões",
+    quotes: "Orçamentos",
+    finance: "Finanças",
     calculator: "Calculadora",
     jobs: "Vagas",
     pack: "Pack de Edição",
@@ -52,10 +53,11 @@ const messages = {
     scheduled: "Agendado",
   },
   en: {
-    dashboard: "Today",
+    dashboard: "Dashboard",
     clients: "Clients",
     schedule: "Production",
     notifications: "Notifications",
+    suggestions: "Suggestions",
     quotes: "Proposals",
     finance: "Revenue",
     calculator: "Calculator",
@@ -92,10 +94,11 @@ const messages = {
     scheduled: "Scheduled",
   },
   es: {
-    dashboard: "Hoy",
+    dashboard: "Dashboard",
     clients: "Clientes",
     schedule: "Producción",
     notifications: "Notificaciones",
+    suggestions: "Sugerencias",
     quotes: "Propuestas",
     finance: "Ingresos",
     calculator: "Calculadora",

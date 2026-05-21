@@ -288,7 +288,7 @@ export default function CommunityExchangePage() {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">EditUp Community Exchange</h1>
+          <h1 className="text-3xl font-bold text-foreground">Mallow Community Exchange</h1>
           <p className="mt-1 text-muted-foreground">Marketplace interno de packs, presets, VFX e SFX compartilhados via Drive.</p>
         </div>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -301,7 +301,7 @@ export default function CommunityExchangePage() {
           <DialogContent className="max-h-[90vh] max-w-3xl overflow-y-auto border-border bg-card">
             <DialogHeader>
               <DialogTitle>Novo recurso</DialogTitle>
-              <DialogDescription>Compartilhe uma pasta do Drive com a comunidade EditUp.</DialogDescription>
+              <DialogDescription>Compartilhe uma pasta do Drive com a comunidade Mallow.</DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2">

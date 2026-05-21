@@ -24,9 +24,9 @@ export function UpgradePaywall({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md overflow-hidden border-white/10 bg-[#080c18] p-0 text-white shadow-2xl">
         <div className="relative p-6">
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(0,34,254,0.38),transparent_42%)]" />
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(157,233,108,0.32),transparent_42%)]" />
           <div className="relative">
-            <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#0022fe] shadow-[0_16px_40px_rgba(0,34,254,0.35)]">
+            <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-[12px] bg-primary text-primary-foreground shadow-[0_16px_40px_rgba(157,233,108,0.28)]">
               {requiredPlan === "Pro" ? <Crown className="h-6 w-6" /> : <LockKeyhole className="h-6 w-6" />}
             </div>
             <DialogHeader>
@@ -35,7 +35,7 @@ export function UpgradePaywall({
             </DialogHeader>
             <div className="mt-5 rounded-2xl border border-white/10 bg-white/[0.06] p-4">
               <div className="flex items-center gap-2 text-sm font-semibold text-white">
-                <Sparkles className="h-4 w-4 text-[#7f96ff]" />
+                <Sparkles className="h-4 w-4 text-primary" />
                 Plano necessário: {requiredPlan}
               </div>
               <p className="mt-2 text-sm leading-6 text-white/58">
@@ -44,7 +44,7 @@ export function UpgradePaywall({
             </div>
             <DialogFooter className="mt-6 gap-2 sm:justify-start">
               <Link href="/dashboard/planos" className="w-full sm:w-auto">
-                <Button className="w-full bg-[#0022fe] text-white hover:bg-[#2444ff]">
+                <Button className="w-full">
                   Ver planos
                 </Button>
               </Link>

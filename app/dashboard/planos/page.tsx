@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { useState } from "react"
-import { Check, Crown, MessageCircleMore, ShieldCheck, Sparkles } from "lucide-react"
+import { Check, Crown, MessageCircleMore, ShieldCheck, Sparkles, X } from "lucide-react"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { PLAN_LABELS, PlanId, planMeets } from "@/lib/app-data"
@@ -16,26 +16,33 @@ const plans: Array<{
   period: string
   description: string
   features: string[]
+  unavailable?: string[]
   popular?: boolean
   pro?: boolean
 }> = [
   {
-    id: "free",
+    id: "starter",
     name: "Starter",
-    price: "R$ 0",
-    period: "",
-    description: "Para começar com agenda, clientes e página profissional sem custo.",
+    price: "R$ 19,90",
+    period: "/mês",
+    description: "Para começar limitado, sem liberar a operação completa.",
     features: [
       "Agenda e clientes",
       "Página profissional",
-      "Aprovação com marca EditUp",
+      "Aprovação com marca Mallow",
       "Marketplace apenas visualização",
+    ],
+    unavailable: [
+      "Financeiro e CRM completos",
+      "Download no Marketplace",
+      "Aprovação sem marca",
+      "Google Drive",
     ],
   },
   {
     id: "essential",
     name: "Essential",
-    price: "R$ 60",
+    price: "R$ 39,90",
     period: "/mês",
     description: "Para operar como profissional com CRM, financeiro e downloads liberados.",
     features: [
@@ -45,12 +52,16 @@ const plans: Array<{
       "Financeiro e CRM liberados",
       "Drive e links de aprovação",
     ],
+    unavailable: [
+      "Creative Cloud",
+      "Marketplace com destaque",
+    ],
     popular: true,
   },
   {
     id: "pro",
     name: "Pro",
-    price: "R$ 80",
+    price: "R$ 59,90",
     period: "/mês",
     description: "Para quem quer benefício externo e controle premium de licença.",
     features: [
@@ -60,6 +71,7 @@ const plans: Array<{
       "Relatórios avançados",
       "Resgate da Creative Cloud",
     ],
+    unavailable: [],
     pro: true,
   },
 ]
@@ -117,7 +129,7 @@ export default function PlanosPage() {
         throw new Error(payload.error ?? "Não foi possível iniciar o teste grátis.")
       }
       await refreshCurrentUser()
-      setMessage("Teste grátis de 30 dias ativado.")
+      setMessage("Teste grátis de 15 dias ativado.")
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Não foi possível iniciar o teste grátis.")
     } finally {
@@ -148,7 +160,7 @@ export default function PlanosPage() {
           </div>
           {(currentUser.plan === "free" || currentUser.plan === "starter") && currentUser.subscriptionStatus !== "active" ? (
             <Button onClick={() => void handleStartTrial()} disabled={isStartingTrial}>
-              {isStartingTrial ? "Liberando..." : "Ativar 30 dias grátis"}
+              {isStartingTrial ? "Liberando..." : "Ativar 15 dias grátis"}
             </Button>
           ) : null}
         </CardContent>
@@ -160,7 +172,7 @@ export default function PlanosPage() {
             key={plan.id}
             className={`relative border-border bg-card transition-all ${
               plan.popular ? "ring-2 ring-primary" : ""
-            } ${plan.pro ? "bg-[radial-gradient(circle_at_top_right,rgba(0,34,254,0.14),transparent_35%),var(--card)]" : ""} ${selectedPlan === plan.id ? "border-primary" : ""}`}
+            } ${plan.pro ? "bg-[radial-gradient(circle_at_top_right,rgba(157,233,108,0.14),transparent_35%),var(--card)]" : ""} ${selectedPlan === plan.id ? "border-primary" : ""}`}
           >
             {plan.popular && (
               <div className="absolute -top-3 left-1/2 -translate-x-1/2">
@@ -172,7 +184,7 @@ export default function PlanosPage() {
             )}
             {plan.pro && (
               <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                <span className="flex items-center gap-1 rounded-full bg-[#0022fe] px-4 py-1 text-xs font-semibold text-white">
+                <span className="flex items-center gap-1 rounded-full bg-primary px-4 py-1 text-xs font-semibold text-primary-foreground">
                   <ShieldCheck className="h-3 w-3" />
                   Licença Pro
                 </span>
@@ -201,13 +213,19 @@ export default function PlanosPage() {
                     <span className="text-sm text-muted-foreground">{feature}</span>
                   </li>
                 ))}
+                {(plan.unavailable ?? []).map((feature) => (
+                  <li key={feature} className="flex items-start gap-3">
+                    <div className="mt-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-destructive/10">
+                      <X className="h-3 w-3 text-destructive" />
+                    </div>
+                    <span className="text-sm text-muted-foreground">{feature}</span>
+                  </li>
+                ))}
               </ul>
             </CardContent>
             <CardFooter>
               {currentUser.plan === plan.id ? (
                 <Button className="w-full" variant="outline" disabled>Plano atual</Button>
-              ) : plan.id === "free" ? (
-                <Button className="w-full" variant="outline" disabled>Incluído na conta</Button>
               ) : (
                 <div className="w-full space-y-2">
                   <Button

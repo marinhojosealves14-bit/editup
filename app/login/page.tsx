@@ -6,21 +6,20 @@ import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { ArrowLeft, KeyRound, ShieldCheck, Sparkles } from "lucide-react"
+import { ArrowLeft, Bot, CreditCard, FileText, Github, KeyRound, MessageCircle, RefreshCcw, Send, Sparkles, Users } from "lucide-react"
 import { useAppSession } from "@/components/app/app-provider"
 
 const PLAN_CONTENT = {
   free: [
-    "Toda conta começa no Starter gratuito",
+    "Teste grátis por 15 dias",
     "Agenda, clientes e página profissional",
     "Upgrade disponível a qualquer momento",
   ],
   starter: [
+    "Starter por R$19,90/mês",
     "Calculadora de propostas",
     "Pack completo de edição",
-    "Acesso vitalício aos recursos do plano",
-    "Ideal para organizar os primeiros projetos",
+    "Plano limitado para primeiros projetos",
   ],
   essential: [
     "Tudo do Starter",
@@ -35,6 +34,22 @@ const PLAN_CONTENT = {
     "Benefícios Pro com pagamento ativo",
   ],
 } as const
+
+const leftTags = [
+  { label: "Assinaturas", icon: RefreshCcw, top: "22%", line: "w-48" },
+  { label: "Clientes", icon: Users, top: "36%", line: "w-56" },
+  { label: "Propostas", icon: FileText, top: "52%", line: "w-64" },
+  { label: "Financeiro", icon: CreditCard, top: "70%", line: "w-44" },
+]
+
+const rightTags = [
+  { label: "Google", icon: Sparkles, top: "12%", line: "w-52" },
+  { label: "SaaS", icon: Bot, top: "20%", line: "w-44" },
+  { label: "Aprovação", icon: FileText, top: "34%", line: "w-56" },
+  { label: "WhatsApp", icon: MessageCircle, top: "54%", line: "w-64" },
+  { label: "Telegram", icon: Send, top: "64%", line: "w-52" },
+  { label: "GitHub", icon: Github, top: "78%", line: "w-44" },
+]
 
 export default function LoginPage() {
   const router = useRouter()
@@ -84,129 +99,135 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col overflow-hidden bg-background">
-      <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute -top-40 left-1/2 h-[620px] w-[620px] -translate-x-1/2 rounded-full bg-primary/16 blur-[128px]" />
-        <div className="absolute bottom-0 right-0 h-[420px] w-[420px] rounded-full bg-primary/8 blur-[120px]" />
+    <div className="relative min-h-screen overflow-hidden bg-white text-[#254342]">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(#dfe8ef_1px,transparent_1px)] [background-size:15px_15px] opacity-60" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[44vh] bg-[linear-gradient(180deg,rgba(157,233,108,0),rgba(157,233,108,0.82)_45%,rgba(89,190,46,0.98))]" />
+      <div className="pointer-events-none absolute left-1/2 top-[18%] h-[520px] w-[760px] -translate-x-1/2 rounded-full bg-white/72 blur-[90px]" />
+
+      <Link
+        href="/"
+        className="absolute left-5 top-5 z-20 inline-flex items-center gap-2 rounded-full border border-[#e3e9ef] bg-white/88 px-4 py-2 text-sm font-semibold tracking-[-0.035em] text-[#254342] shadow-sm transition-colors hover:border-[#9de96c]"
+      >
+        <ArrowLeft className="h-4 w-4" />
+        Voltar
+      </Link>
+
+      <div className="pointer-events-none absolute inset-y-0 left-0 hidden w-[34vw] lg:block">
+        {leftTags.map((tag) => (
+          <FloatingTag key={tag.label} {...tag} side="left" />
+        ))}
+      </div>
+      <div className="pointer-events-none absolute inset-y-0 right-0 hidden w-[34vw] lg:block">
+        {rightTags.map((tag) => (
+          <FloatingTag key={tag.label} {...tag} side="right" />
+        ))}
       </div>
 
-      <div className="relative flex flex-1 flex-col items-center justify-center px-4 py-12">
-        <Link
-          href="/"
-          className="absolute left-4 top-4 flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground md:left-8 md:top-8"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Voltar
-        </Link>
-
-        <div className="mb-8 flex justify-center">
-          <div className="rounded-2xl border border-border bg-card/80 p-2 shadow-2xl">
-            <img src="/logo.jpeg" alt="EditUp" className="h-12 w-12 rounded-xl object-cover sm:h-14 sm:w-14" />
+      <main className="relative z-10 flex min-h-screen items-center justify-center px-5 py-16">
+        <section className="w-full max-w-[520px] rounded-[26px] border border-[#e3e9ef] bg-white/92 px-7 py-10 text-center shadow-[0_28px_90px_rgba(37,67,66,0.12)] backdrop-blur sm:px-12">
+          <div className="mx-auto mb-8 flex h-16 w-16 items-center justify-center overflow-hidden rounded-[14px] bg-white">
+            <img src="/logo.png" alt="Mallow" className="h-full w-full object-contain" />
           </div>
-        </div>
+          <h1 className="text-[40px] font-semibold leading-[1.04] tracking-[-0.075em] text-[#254342] sm:text-[46px]">
+            Boas vindas a <span className="text-[#70c748]">Mallow.</span>
+          </h1>
+          <p className="mx-auto mt-5 max-w-[430px] text-[18px] font-medium leading-7 tracking-[-0.04em] text-[#667085]">
+            Acesse sua operação de edição sem burocracia.
+          </p>
 
-        <div className="grid w-full max-w-5xl gap-6 md:grid-cols-[0.95fr,1.05fr]">
-        <Card className="w-full max-w-md border-border bg-card/95 md:max-w-none">
-          <CardHeader className="text-center">
-            <div className="mx-auto mb-3 inline-flex items-center gap-2 rounded-full border border-primary/25 bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
-              <Sparkles className="h-3.5 w-3.5" />
-              Workspace premium
+          <div className="mt-9 space-y-5 text-left">
+            <Button
+              type="button"
+              variant="outline"
+              className="h-14 w-full rounded-[10px] border-2 border-[#20242a] bg-white text-[17px] font-semibold tracking-[-0.045em] text-[#667085] shadow-[0_3px_0_#111] hover:bg-[#f8fafc] hover:text-[#254342]"
+              onClick={handleGoogleLogin}
+              disabled={isLoading}
+            >
+              <span className="text-[22px] font-bold text-[#4285f4]">G</span>
+              Entrar com o Google
+            </Button>
+
+            <div className="relative flex items-center justify-center">
+              <span className="absolute h-px w-full border-t border-dashed border-[#e3e9ef]" />
+              <span className="relative bg-white px-4 text-[13px] font-medium tracking-[-0.035em] text-[#8b98aa]">ou entre com e-mail</span>
             </div>
-            <CardTitle className="text-2xl text-foreground">Entrar na EditUp</CardTitle>
-            <CardDescription className="text-muted-foreground">
-              Continue com Google ou acesse com email e senha.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
+
+            <form onSubmit={handleLogin} className="space-y-5">
+              <div className="space-y-2.5">
+                <Label htmlFor="email" className="text-[15px] font-semibold tracking-[-0.04em] text-[#20242a]">
+                  E-mail de acesso
+                </Label>
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  placeholder="voce@exemplo.com"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="h-14 rounded-[10px] border-2 border-[#9de96c] bg-white px-4 text-[17px] font-medium tracking-[-0.04em] text-[#254342] shadow-[0_0_0_3px_rgba(157,233,108,0.18)] placeholder:text-[#b7c0cc] focus-visible:ring-0"
+                />
+              </div>
+              <div className="space-y-2.5">
+                <Label htmlFor="password" className="text-[15px] font-semibold tracking-[-0.04em] text-[#20242a]">
+                  Senha
+                </Label>
+                <Input
+                  id="password"
+                  name="password"
+                  type="password"
+                  placeholder="Digite sua senha"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="h-14 rounded-[10px] border border-[#d9e5ef] bg-white px-4 text-[17px] font-medium tracking-[-0.04em] text-[#254342] placeholder:text-[#b7c0cc]"
+                />
+              </div>
               <Button
-                type="button"
-                variant="outline"
-                className="w-full border-border"
-                onClick={handleGoogleLogin}
+                type="submit"
+                className="h-14 w-full rounded-[10px] bg-[#70706d] text-[17px] font-semibold tracking-[-0.045em] text-white hover:bg-[#5f5f5c]"
                 disabled={isLoading}
               >
-                Continuar com Google
+                <KeyRound className="h-5 w-5" />
+                {isLoading ? "Entrando..." : "Entrar"}
               </Button>
+            </form>
 
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <span className="w-full border-t border-border" />
-                </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-card px-2 text-muted-foreground">ou continue com email</span>
-                </div>
-              </div>
-
-              <form onSubmit={handleLogin} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="email" className="text-foreground">Email</Label>
-                  <Input
-                    id="email"
-                    name="email"
-                    type="email"
-                    placeholder="voce@email.com"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="border-border bg-input text-foreground placeholder:text-muted-foreground"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="password" className="text-foreground">Senha</Label>
-                  <Input
-                    id="password"
-                    name="password"
-                    type="password"
-                    placeholder="Digite sua senha"
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="border-border bg-input text-foreground placeholder:text-muted-foreground"
-                  />
-                </div>
-                <Button
-                  type="submit"
-                  className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
-                  disabled={isLoading}
-                >
-                  <KeyRound className="mr-2 h-4 w-4" />
-                  {isLoading ? "Entrando..." : "Entrar"}
-                </Button>
-              </form>
-
-              {successMessage && <p className="text-sm text-primary">{successMessage}</p>}
-              {errorMessage && <p className="text-sm text-destructive">{errorMessage}</p>}
-            </div>
-          </CardContent>
-          <CardFooter className="justify-center">
-            <p className="text-sm text-muted-foreground">
-              Ainda não tem conta?{" "}
-              <Link href={`/cadastro?plan=${selectedPlan}`} className="text-primary hover:underline">
-                Criar conta
-              </Link>
-            </p>
-          </CardFooter>
-        </Card>
-          <div className="hidden flex-col justify-center rounded-3xl border border-border bg-card/70 p-8 md:flex">
-            <h3 className="mb-2 text-2xl font-semibold text-foreground">
-              O plano {selectedPlan === "free" ? "Starter" : selectedPlan === "starter" ? "Starter" : selectedPlan === "pro" ? "Pro" : "Essential"} inclui:
-            </h3>
-            <p className="mb-6 text-sm text-muted-foreground">
-              Uma experiência limpa para precificar, organizar entregas e operar com mais confiança.
-            </p>
-            <ul className="space-y-4">
-              {planItems.map((item) => (
-                <li key={item} className="flex items-center gap-3">
-                  <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/20">
-                    <ShieldCheck className="h-4 w-4 text-primary" />
-                  </div>
-                  <span className="text-muted-foreground">{item}</span>
-                </li>
-              ))}
-            </ul>
+            {successMessage && <p className="text-center text-sm font-medium text-[#62bd36]">{successMessage}</p>}
+            {errorMessage && <p className="text-center text-sm font-medium text-destructive">{errorMessage}</p>}
           </div>
-        </div>
+
+          <p className="mx-auto mt-9 max-w-[380px] text-center text-[15px] font-medium leading-7 tracking-[-0.04em] text-[#667085]">
+            Ainda não tem conta?{" "}
+            <Link href={`/cadastro?plan=${selectedPlan}`} className="font-semibold text-[#254342] underline underline-offset-4">
+              Criar conta
+            </Link>
+          </p>
+        </section>
+      </main>
+    </div>
+  )
+}
+
+function FloatingTag({
+  label,
+  icon: Icon,
+  top,
+  line,
+  side,
+}: {
+  label: string
+  icon: typeof RefreshCcw
+  top: string
+  line: string
+  side: "left" | "right"
+}) {
+  return (
+    <div className={`absolute flex items-center ${side === "left" ? "right-0 flex-row" : "left-0 flex-row-reverse"}`} style={{ top }}>
+      <div className={`${line} h-px bg-[#d9ddf0]`} />
+      <div className="mx-4 inline-flex items-center gap-2 rounded-full border border-[#e3e9ef] bg-white px-5 py-3 text-[15px] font-semibold tracking-[-0.04em] text-[#394257] shadow-[0_8px_22px_rgba(37,67,66,0.08)]">
+        <Icon className="h-5 w-5" />
+        {label}
       </div>
     </div>
   )

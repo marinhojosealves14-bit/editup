@@ -116,7 +116,7 @@ export default function ApprovalPage() {
     [task?.linkDrive]
   )
   const isStarterApproval = editor?.plan === "free" || editor?.plan === "starter" || !editor?.plan
-  const approvalLogo = editor?.plan === "pro" && editor.logo_url ? editor.logo_url : isStarterApproval ? "/logo.jpeg" : ""
+  const approvalLogo = editor?.plan === "pro" && editor.logo_url ? editor.logo_url : isStarterApproval ? "/logo.png" : ""
 
   const downloadUrl = useMemo(() => {
     const rawLink = task?.linkDrive ?? ""
@@ -320,12 +320,12 @@ export default function ApprovalPage() {
       <div className="mx-auto mb-6 flex max-w-6xl items-center justify-between rounded-2xl border border-border bg-card/90 px-4 py-3">
         <div className="flex items-center gap-3">
           {approvalLogo ? (
-            <img src={approvalLogo} alt={isStarterApproval ? "EditUp" : editor?.full_name ?? "Editor"} className="h-10 w-10 rounded-xl object-cover" />
+            <img src={approvalLogo} alt={isStarterApproval ? "Mallow" : editor?.full_name ?? "Editor"} className="h-10 w-10 rounded-xl object-cover" />
           ) : null}
           <div>
-            <p className="text-sm font-semibold text-foreground">{editor?.full_name ?? "EditUp"}</p>
+            <p className="text-sm font-semibold text-foreground">{editor?.full_name ?? "Mallow"}</p>
             <p className="text-xs text-muted-foreground">
-              {isStarterApproval ? "Central profissional de entrega por EditUp" : "Central profissional de entrega"}
+              {isStarterApproval ? "Central profissional de entrega por Mallow" : "Central profissional de entrega"}
             </p>
           </div>
         </div>

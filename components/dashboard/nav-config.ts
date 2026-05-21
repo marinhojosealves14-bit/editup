@@ -1,15 +1,16 @@
 import {
   Bell,
+  Boxes,
   BriefcaseBusiness,
   Calculator,
-  CalendarDays,
-  ClipboardList,
+  ChartSpline,
+  Clapperboard,
   HardDrive,
   Instagram,
-  LayoutDashboard,
-  Package,
+  FileText,
+  MessageSquarePlus,
   Store,
-  User,
+  UserRound,
   Video,
   Wallet,
   type LucideIcon,
@@ -21,6 +22,7 @@ export type DashboardNavNameKey =
   | "clients"
   | "schedule"
   | "notifications"
+  | "suggestions"
   | "quotes"
   | "finance"
   | "calculator"
@@ -40,15 +42,16 @@ export type DashboardNavItem = {
 }
 
 export const dashboardNavItems: DashboardNavItem[] = [
-  { nameKey: "dashboard", href: "/dashboard", icon: LayoutDashboard, minimumPlan: "essential" },
-  { nameKey: "clients", href: "/dashboard/clientes", icon: User, minimumPlan: "essential" },
-  { nameKey: "schedule", href: "/dashboard/kanban", icon: CalendarDays, minimumPlan: "essential" },
+  { nameKey: "dashboard", href: "/dashboard", icon: ChartSpline, minimumPlan: "essential" },
+  { nameKey: "schedule", href: "/dashboard/kanban", icon: Clapperboard, minimumPlan: "essential" },
+  { nameKey: "clients", href: "/dashboard/clientes", icon: UserRound, minimumPlan: "essential" },
   { nameKey: "notifications", href: "/dashboard/notificacoes", icon: Bell, minimumPlan: "essential", isNotification: true },
-  { nameKey: "quotes", href: "/dashboard/orcamentos", icon: ClipboardList, minimumPlan: "essential" },
+  { nameKey: "suggestions", href: "/dashboard/sugestoes", icon: MessageSquarePlus, minimumPlan: "free" },
+  { nameKey: "quotes", href: "/dashboard/orcamentos", icon: FileText, minimumPlan: "essential" },
   { nameKey: "finance", href: "/dashboard/financeiro", icon: Wallet, minimumPlan: "essential" },
   { nameKey: "calculator", href: "/dashboard/calculadora", icon: Calculator, minimumPlan: "free" },
   { nameKey: "jobs", href: "/dashboard/vagas", icon: BriefcaseBusiness, minimumPlan: "essential" },
-  { nameKey: "pack", href: "/dashboard/pack", icon: Package, minimumPlan: "starter" },
+  { nameKey: "pack", href: "/dashboard/pack", icon: Boxes, minimumPlan: "starter" },
   { nameKey: "exchange", href: "/dashboard/exchange", icon: Store, minimumPlan: "starter" },
   { nameKey: "drive", href: "/dashboard/drive", icon: HardDrive, minimumPlan: "starter" },
   { nameKey: "reelsCourse", href: "/dashboard/curso-reels", icon: Video, minimumPlan: "essential" },

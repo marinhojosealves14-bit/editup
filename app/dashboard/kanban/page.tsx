@@ -12,7 +12,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import Link from "next/link"
-import { Calendar, Check, Copy, ExternalLink, Link2, ListChecks, Plus, ScrollText, Trash2, User } from "lucide-react"
+import { ArrowUpDown, Calendar, Check, ChevronDown, Circle, Copy, ExternalLink, Filter, Flag, Link2, ListChecks, MessageCircle, MoreHorizontal, Paperclip, Plus, ScrollText, Trash2, User } from "lucide-react"
 import { useAppSession } from "@/components/app/app-provider"
 import { useAppPreferences } from "@/components/app/preferences-provider"
 import { CONTACT_METHOD_LABELS } from "@/lib/app-data"
@@ -44,11 +44,11 @@ import { DrivePickerButton } from "@/components/google-drive/drive-picker-button
 import { copyTextToClipboard } from "@/lib/clipboard"
 
 const columns = [
-  { id: "agenda", title: "A fazer", badge: "bg-muted-foreground" },
-  { id: "em-producao", title: "Em produção", badge: "bg-yellow-500" },
-  { id: "waiting-response", title: "Aguardando cliente", badge: "bg-indigo-500" },
-  { id: "desaprovado", title: "Precisa de revisão", badge: "bg-red-500" },
-  { id: "concluido", title: "Concluído", badge: "bg-primary" },
+  { id: "agenda", title: "Agendado", accent: "text-slate-500", badge: "border-slate-400" },
+  { id: "em-producao", title: "Produzindo", accent: "text-rose-500", badge: "border-rose-400" },
+  { id: "waiting-response", title: "Aguardando", accent: "text-amber-500", badge: "border-amber-400" },
+  { id: "desaprovado", title: "Para revisar", accent: "text-blue-500", badge: "border-blue-500" },
+  { id: "concluido", title: "Concluído", accent: "text-emerald-500", badge: "border-emerald-500" },
 ] as const
 
 const escopoSugestoes = {
@@ -452,20 +452,31 @@ export default function AgendaPage() {
       : null
 
   return (
-    <div className="min-w-0 overflow-x-hidden space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h1 className="text-3xl font-semibold text-foreground">Produção</h1>
-          <p className="mt-1 text-muted-foreground">O board central para editar, aprovar, revisar e concluir entregas.</p>
+    <div className="min-w-0 space-y-6 overflow-x-hidden bg-card text-foreground">
+      <div className="border-b border-border pb-5">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+          <div>
+            <h1 className="text-2xl font-semibold tracking-[-0.045em] text-foreground">Agenda</h1>
+            <div className="mt-5 flex items-center gap-5 border-b border-border">
+              <button className="relative inline-flex items-center gap-2 pb-3 text-sm font-medium text-foreground after:absolute after:inset-x-0 after:-bottom-px after:h-0.5 after:bg-[#8b5cf6]">
+                <ListChecks className="h-4 w-4 text-[#8b5cf6]" />
+                Todos
+              </button>
+              <button className="inline-flex items-center gap-2 pb-3 text-sm font-medium text-muted-foreground">
+                5 visualizações
+                <ChevronDown className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div className="flex items-center justify-end">
+      <div className="flex flex-wrap items-center gap-2">
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
-            <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
+            <Button className="h-11 rounded-xl bg-black px-5 text-white hover:bg-black/90">
               <Plus className="mr-2 h-4 w-4" />
-              Novo projeto
+              Nova ação
             </Button>
           </DialogTrigger>
           <DialogContent className="border-border bg-card flex max-h-[90vh] w-[min(100%-2rem,56rem)] max-w-4xl flex-col overflow-hidden p-0">
@@ -668,6 +679,14 @@ export default function AgendaPage() {
             </form>
           </DialogContent>
         </Dialog>
+        <Button variant="outline" className="h-11 rounded-xl border-border bg-card px-4 text-foreground">
+          <Filter className="mr-2 h-4 w-4 text-muted-foreground" />
+          Filtro
+        </Button>
+        <Button variant="outline" className="h-11 rounded-xl border-border bg-card px-4 text-foreground">
+          <ArrowUpDown className="mr-2 h-4 w-4 text-muted-foreground" />
+          Ordenar
+        </Button>
       </div>
 
       <FeedbackBanner message={feedbackMessage} type="success" />
@@ -679,41 +698,35 @@ export default function AgendaPage() {
           description="Estamos organizando as entregas por etapa para você retomar o fluxo rapidamente."
         />
       ) : (
-      <div className="w-full max-w-full overflow-x-auto overscroll-x-contain pb-3">
-        <div className="flex min-w-max items-start gap-4 pr-2">
+      <div className="w-full max-w-full overflow-x-auto overscroll-x-contain pb-5">
+        <div className="flex min-w-max items-start gap-6 pr-4">
         {orderedColumns.map((column) => (
-          <Card
+          <section
             key={column.id}
-            className="w-[320px] shrink-0 border-border bg-card/80"
+            className="min-h-[680px] w-[360px] shrink-0 rounded-sm border border-transparent bg-[#fbfbfc]"
             onDragOver={(event) => event.preventDefault()}
             onDrop={() => void handleColumnDrop(column.id)}
           >
-            <CardHeader className="space-y-3">
-              <div className="flex items-center justify-between">
+            <div className="border-b border-border bg-card px-5 py-4">
+              <div className="flex items-center justify-between gap-3">
                 <div className="flex items-center gap-2">
-                  <div className={`h-3 w-3 rounded-full ${column.badge}`} />
-                  <CardTitle className="text-base text-foreground">{column.title}</CardTitle>
+                  <Circle className={cn("h-4 w-4", column.accent)} />
+                  <h2 className="text-base font-semibold tracking-[-0.035em] text-foreground">{column.title}</h2>
+                  <span className="text-xs font-medium text-muted-foreground">{column.tasks.length}</span>
                 </div>
-                <span className="rounded-full border border-border bg-background px-2.5 py-1 text-xs text-muted-foreground">
-                  {column.tasks.length}
-                </span>
+                {column.id === "agenda" ? (
+                  <button type="button" onClick={() => setDialogOpen(true)} className="rounded-md p-1 text-muted-foreground hover:bg-secondary hover:text-foreground">
+                    <Plus className="h-5 w-5" />
+                  </button>
+                ) : (
+                  <MoreHorizontal className="h-5 w-5 text-muted-foreground" />
+                )}
               </div>
-              <CardDescription className="text-sm text-muted-foreground">
-                {column.id === "agenda"
-                  ? "Projetos prontos para começar."
-                  : column.id === "em-producao"
-                    ? "Vídeos em edição neste momento."
-                    : column.id === "waiting-response"
-                      ? "Entregues e aguardando resposta do cliente."
-                      : column.id === "desaprovado"
-                        ? "Cliente pediu ajustes."
-                        : "Trabalho aprovado e concluído."}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-3">
+            </div>
+            <div className="space-y-4 p-4">
               {column.tasks.length === 0 && (
-                <div className="rounded-xl border border-dashed border-border bg-background p-4 text-sm text-muted-foreground">
-                  Nenhuma tarefa nesta etapa ainda.
+                <div className="min-h-[132px] rounded-xl bg-[#f7f7f8] p-4 text-sm text-muted-foreground">
+                  Solte uma ação aqui.
                 </div>
               )}
 
@@ -724,65 +737,44 @@ export default function AgendaPage() {
                   onDragStart={() => setDraggingTaskId(task.id)}
                   onDragEnd={() => setDraggingTaskId("")}
                   className={cn(
-                    "cursor-grab rounded-2xl border border-border bg-background p-4 shadow-[0_1px_0_rgba(255,255,255,0.03)] space-y-4 active:cursor-grabbing",
+                    "group cursor-grab space-y-3 rounded-xl border border-border bg-card p-4 shadow-[0_10px_22px_rgba(15,23,42,0.06)] transition-transform hover:-translate-y-0.5 active:cursor-grabbing",
+                    column.id === "em-producao" && "border-t-4 border-t-rose-500",
                     draggingTaskId === task.id && "opacity-50"
                   )}
                 >
-                  <div className="space-y-2">
-                    <div className="flex items-start justify-between gap-3">
-                      <p className="text-sm font-semibold leading-6 text-foreground">{task.titulo}</p>
-                      {task.statusCliente && task.statusCliente !== "pendente" && (
-                        <Badge className={task.statusCliente === "concluido" ? "bg-primary/15 text-primary" : "bg-red-500/15 text-red-400"}>
-                          {task.statusCliente === "concluido" ? "Aprovado" : "Ajustes"}
-                        </Badge>
-                      )}
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-semibold leading-6 tracking-[-0.025em] text-foreground">{task.titulo}</p>
+                      {task.descricao && <p className="mt-0.5 line-clamp-2 text-sm leading-5 text-muted-foreground">{task.descricao}</p>}
                     </div>
-                    {task.descricao && <p className="text-sm leading-6 text-muted-foreground">{task.descricao}</p>}
+                    <MoreHorizontal className="h-5 w-5 shrink-0 text-muted-foreground" />
                   </div>
 
-                  <div className="grid gap-2 text-xs text-muted-foreground">
-                    <span className="inline-flex items-center gap-2 rounded-lg bg-card px-3 py-2">
-                      <span
-                        className="flex h-6 w-6 items-center justify-center overflow-hidden rounded-full bg-primary/20 bg-cover bg-center"
-                        style={clientLookup.get(task.clienteId)?.fotoUrl ? { backgroundImage: `url(${clientLookup.get(task.clienteId)?.fotoUrl})` } : undefined}
-                      >
-                        {!clientLookup.get(task.clienteId)?.fotoUrl && <User className="h-3 w-3" />}
-                      </span>
-                      {task.clienteNome}
+                  <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                    <span className={cn("inline-flex h-7 items-center gap-1 rounded-md px-2", column.id === "waiting-response" ? "bg-rose-50 text-rose-500" : "bg-secondary")}>
+                      <Flag className={cn("h-3.5 w-3.5", column.accent)} />
+                      {column.id === "waiting-response" ? "Hoje" : task.prazo ? formatDate(task.prazo).split(",")[0] : "Sem prazo"}
                     </span>
-                    <span className="inline-flex items-center gap-2 rounded-lg bg-card px-3 py-2">
-                      <Calendar className="h-3 w-3" />
-                      {formatDate(task.prazo)}
+                    <span className="inline-flex h-7 items-center gap-1 rounded-md bg-secondary px-2">
+                      <Paperclip className="h-3.5 w-3.5" />
+                      {task.linkDrive ? 1 : 0}
+                    </span>
+                    <span className="inline-flex h-7 items-center gap-1 rounded-md bg-secondary px-2">
+                      <MessageCircle className="h-3.5 w-3.5" />
+                      {task.feedbackCliente ? 1 : 0}
                     </span>
                     {parseStoredProjectValue(task.escopo?.valorCombinado) ? (
-                      <span className="inline-flex items-center gap-2 rounded-lg bg-card px-3 py-2">
-                        Valor: <span className="font-medium text-foreground">{formatCurrency(parseStoredProjectValue(task.escopo?.valorCombinado) ?? 0)}</span>
+                      <span className="inline-flex h-7 items-center rounded-md bg-secondary px-2 font-medium text-foreground">
+                        {formatCurrency(parseStoredProjectValue(task.escopo?.valorCombinado) ?? 0)}
                       </span>
                     ) : null}
-                    {task.linkAprovacao ? (
-                      <span className="inline-flex items-center gap-2 rounded-lg bg-card px-3 py-2">
-                        Aprovação: <span className="font-medium text-foreground">{task.statusCliente === "pendente" ? "aguardando cliente" : task.statusCliente}</span>
-                      </span>
-                    ) : null}
-                  </div>
-
-                  <div className="space-y-2 rounded-xl border border-border bg-card/70 p-3">
-                    <div className="flex items-center justify-between text-xs text-muted-foreground">
-                      <span className="inline-flex items-center gap-1">
-                        <ListChecks className="h-3 w-3" />
-                        Kickoff
-                      </span>
-                      <span>{getChecklistProgress(task.checklist)}%</span>
-                    </div>
-                    <Progress value={getChecklistProgress(task.checklist)} />
-                    {summarizeScope(task.escopo) ? (
-                      <p className="text-xs text-muted-foreground">
-                        <span className="font-medium text-foreground">Escopo:</span> {summarizeScope(task.escopo)}
-                      </p>
-                    ) : null}
-                    <p className="text-xs text-muted-foreground">
-                      <span className="font-medium text-foreground">Next step:</span> {getNextTaskAction(task)}
-                    </p>
+                    <span
+                      className="ml-auto flex h-8 w-8 items-center justify-center overflow-hidden rounded-full bg-primary/15 bg-cover bg-center text-primary"
+                      style={clientLookup.get(task.clienteId)?.fotoUrl ? { backgroundImage: `url(${clientLookup.get(task.clienteId)?.fotoUrl})` } : undefined}
+                      title={task.clienteNome}
+                    >
+                      {!clientLookup.get(task.clienteId)?.fotoUrl && <User className="h-4 w-4" />}
+                    </span>
                   </div>
 
                   {task.linkDrive && (
@@ -796,13 +788,13 @@ export default function AgendaPage() {
                     </Link>
                   )}
 
-                  <div className="flex flex-wrap gap-2 border-t border-border pt-3">
-                    <Button variant="outline" className="border-border bg-card" size="sm" onClick={() => openTaskDetails(task)}>
+                  <div className="flex flex-wrap gap-2 border-t border-border pt-3 opacity-0 transition-opacity group-hover:opacity-100">
+                    <Button variant="outline" className="h-8 border-border bg-card px-2 text-xs" size="sm" onClick={() => openTaskDetails(task)}>
                       <ScrollText className="mr-2 h-4 w-4" />
                       Detalhes
                     </Button>
                     {task.clienteId ? (
-                      <Button asChild variant="outline" className="border-border bg-card" size="sm">
+                      <Button asChild variant="outline" className="h-8 border-border bg-card px-2 text-xs" size="sm">
                         <Link href={`/dashboard/clientes/${task.clienteId}`}>
                           <User className="mr-2 h-4 w-4" />
                           CRM
@@ -813,6 +805,7 @@ export default function AgendaPage() {
                       <Button
                         variant={task.linkAprovacao ? "outline" : "default"}
                         className={cn(
+                          "h-8 px-2 text-xs",
                           task.linkAprovacao
                             ? "border-border bg-card"
                             : "bg-primary text-primary-foreground hover:bg-primary/90"
@@ -830,14 +823,14 @@ export default function AgendaPage() {
                       </Button>
                     )}
                     {column.id !== "concluido" && task.linkAprovacao && (
-                      <Button variant="outline" className="border-border bg-card" size="sm" onClick={() => openApprovalLink(task)}>
+                      <Button variant="outline" className="h-8 border-border bg-card px-2 text-xs" size="sm" onClick={() => openApprovalLink(task)}>
                         <Link2 className="mr-2 h-4 w-4" />
                         Ver link
                       </Button>
                     )}
                     <Button
                       variant="outline"
-                      className="border-border bg-card text-destructive hover:bg-destructive/10 hover:text-destructive"
+                      className="h-8 border-border bg-card px-2 text-xs text-destructive hover:bg-destructive/10 hover:text-destructive"
                       size="sm"
                       onClick={() => void handleDeleteTask(task.id)}
                       disabled={deletingTaskId === task.id}
@@ -848,8 +841,8 @@ export default function AgendaPage() {
                   </div>
                 </div>
               ))}
-            </CardContent>
-          </Card>
+            </div>
+          </section>
         ))}
         </div>
       </div>

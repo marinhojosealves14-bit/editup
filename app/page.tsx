@@ -14,7 +14,7 @@ const inter = Inter({
 
 export default function Home() {
   return (
-    <div className={cn("min-h-screen bg-white text-[#111827]", inter.className)}>
+    <div className={cn("min-h-screen bg-white text-[#254342]", inter.className)}>
       <Header />
       <main>
         <Hero />

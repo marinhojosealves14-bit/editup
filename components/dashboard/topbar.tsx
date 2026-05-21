@@ -155,7 +155,7 @@ export function DashboardTopbar() {
   )
 
   useEffect(() => {
-    const baseTitle = "EditUp - Plataforma para editores"
+    const baseTitle = "Mallow - Plataforma para editores"
     document.title = unreadCount > 0 ? `(${unreadCount}) ${baseTitle}` : baseTitle
   }, [unreadCount])
 
@@ -163,19 +163,27 @@ export function DashboardTopbar() {
 
   const displayName = currentUser.name || currentUser.profile.fullName
   const photoUrl = currentUser.accountPhotoUrl?.trim() || ""
+  const activeItem = dashboardNavItems
+    .filter((item) => pathname === item.href || pathname.startsWith(`${item.href}/`))
+    .sort((a, b) => b.href.length - a.href.length)[0]
+  const ActiveIcon = activeItem?.icon
 
   return (
     <>
-      <div className="mb-5 flex items-center justify-between gap-3 border-b border-border bg-background/95 px-0 py-3">
-        <div>
-          <p className="text-sm font-medium text-foreground">Workspace</p>
-          <p className="text-xs text-muted-foreground">Organize clientes, propostas e entregas.</p>
+      <div className="mb-8 flex items-center justify-between gap-3 bg-background/95 px-1 py-2">
+        <div className="flex min-w-0 items-center gap-3">
+          {ActiveIcon ? <ActiveIcon className="h-6 w-6 shrink-0 text-muted-foreground" /> : null}
+          <div className="min-w-0">
+            <p className="truncate text-2xl font-semibold text-foreground">
+              {activeItem ? t(activeItem.nameKey) : "Dashboard"}
+            </p>
+          </div>
         </div>
 
         <div className="flex items-center gap-2">
           <button
             type="button"
-            className="group/search flex h-8 w-8 items-center justify-center overflow-hidden rounded-md bg-secondary text-muted-foreground transition-[width,color,background-color] duration-200 hover:w-56 hover:text-foreground focus-visible:w-56 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="group/search hidden h-10 w-10 items-center justify-center overflow-hidden rounded-xl bg-transparent text-muted-foreground transition-[width,color,background-color] duration-200 hover:w-56 hover:bg-card hover:text-foreground focus-visible:w-56 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:flex"
             onClick={() => setCommandOpen(true)}
             aria-label="Buscar"
           >
@@ -191,7 +199,7 @@ export function DashboardTopbar() {
                 type="button"
                 variant="ghost"
                 size="icon"
-                className="relative rounded-md border border-transparent bg-secondary text-muted-foreground hover:bg-secondary hover:text-foreground"
+                className="relative rounded-xl border border-transparent bg-transparent text-muted-foreground hover:bg-card hover:text-foreground"
             >
               <Bell className="h-4 w-4" />
               {unreadCount > 0 && (
@@ -236,7 +244,7 @@ export function DashboardTopbar() {
           </PopoverContent>
           </Popover>
 
-          <div className="flex items-center gap-3 rounded-md bg-secondary px-2 py-1.5">
+          <div className="hidden items-center gap-3 rounded-xl bg-card px-2 py-1.5 sm:flex">
             <div className="text-right">
               <p className="text-sm font-semibold text-foreground">{displayName}</p>
             </div>
