@@ -5,6 +5,7 @@ import { Lightbulb, MessageSquarePlus, Send } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { authFetch } from "@/lib/supabase"
 
@@ -117,18 +118,21 @@ export default function SuggestionsPage() {
               <label className="text-sm font-semibold text-foreground" htmlFor="suggestion-category">
                 Área
               </label>
-              <select
-                id="suggestion-category"
-                value={category}
-                onChange={(event) => setCategory(event.target.value)}
-                className="h-10 rounded-md border border-border bg-input px-3.5 text-sm font-medium text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring/30"
-              >
-                {categories.map((item) => (
-                  <option key={item} value={item}>
-                    {item}
-                  </option>
-                ))}
-              </select>
+              <Select value={category} onValueChange={setCategory}>
+                <SelectTrigger
+                  id="suggestion-category"
+                  className="h-12 w-full rounded-[10px] border-border bg-background px-4 text-sm font-semibold text-foreground shadow-none hover:border-primary/45 hover:bg-background focus-visible:ring-primary/20"
+                >
+                  <SelectValue placeholder="Escolha a área" />
+                </SelectTrigger>
+                <SelectContent className="rounded-[12px]">
+                  {categories.map((item) => (
+                    <SelectItem key={item} value={item} className="rounded-[8px]">
+                      {item}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="grid gap-2">

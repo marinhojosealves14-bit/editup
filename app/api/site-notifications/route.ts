@@ -5,7 +5,7 @@ import { enforceApiRateLimit, ensureSameOrigin, requireAdminAuthenticatedUser, s
 
 export const runtime = "nodejs"
 
-const ADMIN_EMAIL = "morinhajose1103@gmail.com"
+const ADMIN_EMAIL = "marinhojose1103@gmail.com"
 const notificationSchema = z.object({
   title: z.string().trim().min(1).max(120),
   message: z.string().trim().min(1).max(1000),

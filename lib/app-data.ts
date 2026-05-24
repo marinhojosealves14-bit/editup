@@ -111,13 +111,7 @@ export const PLAN_LABELS: Record<PlanId, string> = {
 const DASHBOARD_ACCESS_BY_PLAN: Record<PlanId, string[]> = {
   free: [
     "/dashboard",
-    "/dashboard/kanban",
-    "/dashboard/clientes",
-    "/dashboard/perfil",
     "/dashboard/sugestoes",
-    "/dashboard/calculadora",
-    "/dashboard/pack",
-    "/dashboard/exchange",
     "/dashboard/planos",
     "/dashboard/configuracoes",
   ],
@@ -197,6 +191,14 @@ export const getEffectivePlanForAccess = (
   trialEndsAt?: string
 ): PlanId => {
   if (subscriptionStatus === "trialing" && isTrialExpired(trialEndsAt)) {
+    return "free"
+  }
+
+  if (subscriptionStatus === "active" || subscriptionStatus === "trialing") {
+    return plan
+  }
+
+  if (plan === "essential" || plan === "pro") {
     return "free"
   }
 

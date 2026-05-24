@@ -106,19 +106,33 @@ const createOptimisticUserFromAuthUser = (authUser: User): AppUser => {
       : normalizedEmail.split("@")[0] || "Editor"
   const defaultProfile = createDefaultProfile(fallbackName, normalizedEmail, [])
   const avatarUrl = getAuthAvatarUrl(authUser)
+  const defaultPlan = getDefaultPlanForEmail(normalizedEmail)
 
   return {
     id: authUser.id,
     name: fallbackName,
     email: normalizedEmail,
     password: "",
-    plan: getDefaultPlanForEmail(normalizedEmail),
+    plan: defaultPlan,
+    subscriptionStatus: canDirectLoginEmail(normalizedEmail) ? "active" : "none",
     createdAt: new Date().toISOString(),
     profile: {
       ...defaultProfile,
       photoUrl: avatarUrl || defaultProfile.photoUrl,
     },
   }
+}
+
+const normalizeCachedAppUserForAccess = (user: AppUser): AppUser => {
+  if (canDirectLoginEmail(user.email)) {
+    return {
+      ...user,
+      subscriptionStatus: user.subscriptionStatus ?? "active",
+    }
+  }
+
+  const effectivePlan = getEffectivePlanForAccess(user.plan, user.subscriptionStatus, user.trialEndsAt)
+  return effectivePlan === user.plan ? user : { ...user, plan: effectivePlan }
 }
 
 const mapProfileToAppUser = (profile: Record<string, unknown>): AppUser => {
@@ -267,6 +281,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
     const defaultProfile = createDefaultProfile(fallbackName, normalizedEmail, [])
     const defaultAppearanceTheme = builtInAppearanceThemes[0]
+    const defaultPlan = getDefaultPlanForEmail(normalizedEmail)
     const profilePayload = {
       id: authUser.id,
       email: normalizedEmail,
@@ -286,7 +301,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       video_styles: defaultProfile.videoStyles,
       contact_method: defaultProfile.contactMethod,
       contact_value: normalizedEmail,
-      plan: getDefaultPlanForEmail(normalizedEmail),
+      plan: defaultPlan,
+      subscription_tier: defaultPlan === "pro" ? "pro" : defaultPlan === "essential" ? "essential" : "starter",
+      subscription_status: canDirectLoginEmail(normalizedEmail) ? "active" : "none",
       can_publish_jobs: getDefaultPublishPermission(normalizedEmail),
       monthly_revenue_goal: 5000,
       app_language: "pt",
@@ -354,6 +371,14 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       if (existingProfile.can_publish_jobs !== expectedPublishPermission) {
         updates.can_publish_jobs = expectedPublishPermission
       }
+
+      if (existingProfile.subscription_status !== "active") {
+        updates.subscription_status = "active"
+      }
+
+      if (existingProfile.subscription_tier !== (expectedPlan === "pro" ? "pro" : expectedPlan === "essential" ? "essential" : "starter")) {
+        updates.subscription_tier = expectedPlan === "pro" ? "pro" : expectedPlan === "essential" ? "essential" : "starter"
+      }
     }
 
     if (Object.keys(updates).length > 0) {
@@ -408,8 +433,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
             try {
               const cachedProfile = JSON.parse(cachedProfileRaw) as AppUser
               if (cachedProfile?.id === session.user.id && isMounted) {
-                setCurrentUser(cachedProfile)
-                setUsers([cachedProfile])
+                const safeCachedProfile = normalizeCachedAppUserForAccess(cachedProfile)
+                setCurrentUser(safeCachedProfile)
+                setUsers([safeCachedProfile])
               }
             } catch {}
           } else if (isMounted) {
@@ -507,20 +533,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const isEmailConfirmationRequiredMessage = (message: string) =>
     /confirm|confirmed|not confirmed|email verification|verify/i.test(message)
 
-  const claimFreeTrialSignup = async (email: string) => {
-    try {
-      await fetch("/api/free-trial", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email }),
-      })
-    } catch (error) {
-      console.error("Nao foi possivel atualizar o contador do teste gratis:", error)
-    }
-  }
-
   const registerUser = async ({ name, email, password }: RegisterPayload) => {
     if (isSupabaseConfigured) {
       const normalizedEmail = email.trim().toLowerCase()
@@ -584,7 +596,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       }
 
       if (data.session?.user) {
-        void claimFreeTrialSignup(normalizedEmail)
         return {
           success: true,
           message: "Conta criada com sucesso.",
@@ -599,7 +610,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       })
 
       if (!signInResult.error) {
-        void claimFreeTrialSignup(normalizedEmail)
         return {
           success: true,
           message: "Conta criada com sucesso.",
@@ -612,7 +622,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         return {
           success: true,
           message:
-            "A conta foi criada, mas ainda não pode entrar porque o Supabase deste projeto exige confirmação por e-mail. Se esse e-mail não chega, desative a confirmação de e-mail no Supabase ou configure o envio corretamente.",
+            "Conta criada. Enviamos um e-mail de confirmação para liberar seu acesso. Confira sua caixa de entrada e o spam.",
           requiresCode: false,
           signedIn: false,
         }
@@ -645,7 +655,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
     setUsers((prev) => [...prev, newUser])
     setCurrentUser(newUser)
-    void claimFreeTrialSignup(normalizedEmail)
     return { success: true, requiresCode: false, signedIn: true }
   }
 
@@ -665,7 +674,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           return {
             success: false,
             message:
-              "Sua conta existe, mas o Supabase ainda está exigindo confirmação por e-mail. Se você não recebeu nada, ajuste isso no painel do Supabase.",
+              "Seu acesso ainda precisa ser confirmado por e-mail. Confira sua caixa de entrada e o spam antes de tentar novamente.",
             requiresCode: false,
           }
         }

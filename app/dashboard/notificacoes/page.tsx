@@ -42,7 +42,7 @@ type UserSystemNotification = {
   kind: "approval-expired" | "drive" | "system"
 }
 
-const adminEmail = "morinhajose1103@gmail.com"
+const adminEmail = "marinhojose1103@gmail.com"
 
 const isSameDay = (date: Date, compareDate: Date) =>
   date.getFullYear() === compareDate.getFullYear() &&

@@ -39,6 +39,7 @@ import { cn } from "@/lib/utils"
 import PerfilPage from "@/app/dashboard/perfil/page"
 import { authFetch } from "@/lib/supabase"
 import { QuoteBuilderSettings } from "@/components/quote/quote-builder-settings"
+import { getCreativeCloudRedeemWhatsAppUrl } from "@/lib/creative-cloud"
 
 const DISMISS_KEY = "editup-notification-popup-disabled"
 const ASK_LATER_KEY = "editup-notification-popup-dismissed"
@@ -720,7 +721,11 @@ export default function ConfiguracoesPage() {
                           <p className="mt-2">Prazo de resgate: {creativeCloudRedeemExpiresAt.toLocaleDateString("pt-BR")}.</p>
                         )}
                       </div>
-                      <Button className="mt-4" disabled={!canRedeemCreativeCloud} onClick={() => window.open("mailto:mallowdigital@yahoo.com?subject=Resgate%20Creative%20Cloud%20Pro%20Mallow", "_blank")}>
+                      <Button
+                        className="mt-4"
+                        disabled={!canRedeemCreativeCloud}
+                        onClick={() => window.open(getCreativeCloudRedeemWhatsAppUrl(currentUser?.creativeCloudRedeemAvailableUntil), "_blank")}
+                      >
                         Resgatar acesso
                       </Button>
                     </div>

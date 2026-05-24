@@ -1,7 +1,30 @@
 {
   "freeTrialClaimedEmails": [
-    "workandiwakeup@gmail.com"
+    "workandiwakeup@gmail.com",
+    "kakef27818@ameady.com"
   ],
   "broadcasts": [],
-  "userNotifications": []
+  "userNotifications": [
+    {
+      "id": "f2098585-e4b9-4759-bc7f-2408466fbb9f",
+      "userId": "2b4c83f9-959b-44e6-bef9-f04930f63bc8",
+      "title": "Nova sugestão: dasdasdasd",
+      "message": "Área: Aprovação. Enviada por Marinho (kakef27818@ameady.com). dasdasdasdsadas",
+      "kind": "system",
+      "createdAt": "2026-05-21T23:48:55.666Z",
+      "read": false
+    }
+  ],
+  "productSuggestions": [
+    {
+      "id": "8c07f2eb-e9fb-4eef-a6fe-f2ad675e82ae",
+      "userId": "232acad6-16e2-405e-b658-d1b37e7db804",
+      "author": "Marinho",
+      "email": "kakef27818@ameady.com",
+      "title": "dasdasdasd",
+      "category": "Aprovação",
+      "message": "dasdasdasdsadas",
+      "createdAt": "2026-05-21T23:48:55.666Z"
+    }
+  ]
 }

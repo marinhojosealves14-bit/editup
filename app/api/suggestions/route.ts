@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { z } from "zod"
 import { readEditUpState, writeEditUpState } from "@/lib/editup-state"
 import { enforceApiRateLimit, ensureSameOrigin, requireAdminAuthenticatedUser, sanitizePlainText } from "@/lib/api-admin"
+import { findProfileUserIdByEmail, pushProfileNotification } from "@/lib/profile-notifications"
 
 export const runtime = "nodejs"
 
@@ -10,6 +11,8 @@ const suggestionSchema = z.object({
   category: z.string().trim().min(2).max(40),
   message: z.string().trim().min(10).max(2000),
 })
+
+const SUGGESTION_INBOX_EMAIL = "marinhojose1103@gmail.com"
 
 export async function GET(request: NextRequest) {
   try {
@@ -34,7 +37,7 @@ export async function POST(request: NextRequest) {
     const rateLimitError = enforceApiRateLimit(request, "suggestions:post", 30)
     if (rateLimitError) return rateLimitError
 
-    const { user } = await requireAdminAuthenticatedUser(request)
+    const { supabase, user } = await requireAdminAuthenticatedUser(request)
     const body = suggestionSchema.parse(await request.json().catch(() => ({})))
     const title = sanitizePlainText(body.title)
     const category = sanitizePlainText(body.category)
@@ -58,7 +61,29 @@ export async function POST(request: NextRequest) {
 
     state.productSuggestions.unshift(suggestion)
     state.productSuggestions = state.productSuggestions.slice(0, 500)
-    await writeEditUpState(state)
+
+    const inboxUserId = await findProfileUserIdByEmail(supabase, SUGGESTION_INBOX_EMAIL)
+
+    if (inboxUserId) {
+      const notification = {
+        id: crypto.randomUUID(),
+        userId: inboxUserId,
+        title: `Nova sugestão: ${title}`,
+        message: `Área: ${category}. Enviada por ${suggestion.author} (${suggestion.email}). ${message}`,
+        kind: "system",
+        createdAt: suggestion.createdAt,
+        read: false,
+      } as const
+      state.userNotifications.unshift(notification)
+      state.userNotifications = state.userNotifications.slice(0, 200)
+      await pushProfileNotification(supabase, inboxUserId, notification)
+    }
+
+    try {
+      await writeEditUpState(state)
+    } catch (stateError) {
+      console.error("Could not persist local suggestion state", stateError)
+    }
 
     return NextResponse.json({ success: true, suggestion })
   } catch (error) {

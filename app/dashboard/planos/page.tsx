@@ -1,19 +1,19 @@
 "use client"
 
-import Link from "next/link"
 import { useState } from "react"
-import { Check, Crown, MessageCircleMore, ShieldCheck, Sparkles, X } from "lucide-react"
+import { Check, Crown, ShieldCheck, Sparkles, X } from "lucide-react"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { PLAN_LABELS, PlanId, planMeets } from "@/lib/app-data"
 import { useAppSession } from "@/components/app/app-provider"
 import { authFetch } from "@/lib/supabase"
+import { cn } from "@/lib/utils"
 
 const plans: Array<{
   id: PlanId
   name: string
-  price: string
-  period: string
+  monthlyPrice: string
+  annualPrice: string
   description: string
   features: string[]
   unavailable?: string[]
@@ -23,8 +23,8 @@ const plans: Array<{
   {
     id: "starter",
     name: "Starter",
-    price: "R$ 19,90",
-    period: "/mês",
+    monthlyPrice: "R$ 19,90",
+    annualPrice: "R$ 200,00",
     description: "Para começar limitado, sem liberar a operação completa.",
     features: [
       "Agenda e clientes",
@@ -42,8 +42,8 @@ const plans: Array<{
   {
     id: "essential",
     name: "Essential",
-    price: "R$ 39,90",
-    period: "/mês",
+    monthlyPrice: "R$ 39,90",
+    annualPrice: "R$ 400,00",
     description: "Para operar como profissional com CRM, financeiro e downloads liberados.",
     features: [
       "Tudo do Starter",
@@ -61,8 +61,8 @@ const plans: Array<{
   {
     id: "pro",
     name: "Pro",
-    price: "R$ 59,90",
-    period: "/mês",
+    monthlyPrice: "R$ 59,90",
+    annualPrice: "R$ 600,00",
     description: "Para quem quer benefício externo e controle premium de licença.",
     features: [
       "Tudo do Essential",
@@ -78,6 +78,7 @@ const plans: Array<{
 
 export default function PlanosPage() {
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null)
+  const [billing, setBilling] = useState<"monthly" | "annual">("monthly")
   const [isStartingTrial, setIsStartingTrial] = useState(false)
   const [message, setMessage] = useState("")
   const { currentUser, refreshCurrentUser } = useAppSession()
@@ -85,22 +86,25 @@ export default function PlanosPage() {
   if (!currentUser) return null
 
   const handlePlanChange = async (planId: PlanId) => {
-    if (planId === "free" || planId === currentUser.plan) return
-    if (planMeets(currentUser.plan, planId)) {
+    if (planId === "free") return
+    if (currentUser.subscriptionStatus === "active" && planId === currentUser.plan) return
+    if (currentUser.subscriptionStatus === "active" && planMeets(currentUser.plan, planId)) {
       setMessage("Esse plano já está liberado para sua conta.")
       return
     }
 
-    setSelectedPlan(planId)
+    const selectedKey = `${planId}:${billing}`
+    setSelectedPlan(selectedKey)
     setMessage("")
 
-    const response = await authFetch("/api/stripe/checkout", {
+    const response = await authFetch("/api/cakto/checkout", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
         plan: planId,
+        billing,
       }),
     })
 
@@ -137,12 +141,33 @@ export default function PlanosPage() {
     }
   }
 
+  const hasActivePaidSubscription = currentUser.subscriptionStatus === "active"
+
   return (
     <div className="mx-auto max-w-5xl space-y-8">
       <div>
         <h1 className="text-2xl font-bold text-foreground md:text-3xl">Planos e cobrança</h1>
         <p className="mt-1 text-muted-foreground">Controle de acesso por tiers para a sua operação de edição.</p>
         {message && <p className="mt-2 text-sm text-destructive">{message}</p>}
+      </div>
+
+      <div className="inline-flex rounded-[10px] border border-border bg-card p-1">
+        {[
+          { id: "monthly" as const, label: "Mensal" },
+          { id: "annual" as const, label: "Anual" },
+        ].map((item) => (
+          <button
+            key={item.id}
+            type="button"
+            onClick={() => setBilling(item.id)}
+            className={cn(
+              "rounded-[8px] px-4 py-2 text-sm font-semibold transition-colors",
+              billing === item.id ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-secondary"
+            )}
+          >
+            {item.label}
+          </button>
+        ))}
       </div>
 
       <Card className="border-primary/50 bg-gradient-to-r from-primary/10 to-primary/5">
@@ -190,7 +215,7 @@ export default function PlanosPage() {
                 </span>
               </div>
             )}
-            {currentUser.plan === plan.id && (
+            {hasActivePaidSubscription && currentUser.plan === plan.id && (
               <div className="absolute -top-3 right-4">
                 <span className="rounded-full bg-secondary px-3 py-1 text-xs font-medium text-foreground">Plano atual</span>
               </div>
@@ -199,8 +224,10 @@ export default function PlanosPage() {
               <CardTitle className="text-xl text-foreground">{plan.name}</CardTitle>
               <CardDescription className="text-muted-foreground">{plan.description}</CardDescription>
               <div className="mt-4">
-                <span className="text-4xl font-bold text-foreground">{plan.price}</span>
-                <span className="text-muted-foreground">{plan.period}</span>
+                <span className="text-4xl font-bold text-foreground">
+                  {billing === "monthly" ? plan.monthlyPrice : plan.annualPrice}
+                </span>
+                <span className="text-muted-foreground">{billing === "monthly" ? "/mês" : "/ano"}</span>
               </div>
             </CardHeader>
             <CardContent>
@@ -224,24 +251,16 @@ export default function PlanosPage() {
               </ul>
             </CardContent>
             <CardFooter>
-              {currentUser.plan === plan.id ? (
+              {hasActivePaidSubscription && currentUser.plan === plan.id ? (
                 <Button className="w-full" variant="outline" disabled>Plano atual</Button>
               ) : (
-                <div className="w-full space-y-2">
-                  <Button
-                    className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
-                    onClick={() => handlePlanChange(plan.id)}
-                    disabled={selectedPlan === plan.id}
-                  >
-                    {selectedPlan === plan.id ? "Abrindo checkout..." : `Assinar ${plan.name}`}
-                  </Button>
-                  <Link href="https://wa.me/5581997985738" target="_blank" className="block">
-                    <Button variant="outline" className="w-full border-border">
-                      <MessageCircleMore className="mr-2 h-4 w-4" />
-                      Pagar com Pix
-                    </Button>
-                  </Link>
-                </div>
+                <Button
+                  className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+                  onClick={() => handlePlanChange(plan.id)}
+                  disabled={selectedPlan === `${plan.id}:${billing}`}
+                >
+                  {selectedPlan === `${plan.id}:${billing}` ? "Abrindo checkout..." : `Assinar ${plan.name}`}
+                </Button>
               )}
             </CardFooter>
           </Card>
@@ -251,7 +270,7 @@ export default function PlanosPage() {
       <Card className="border-border bg-card">
         <CardHeader>
           <CardTitle className="text-foreground">Regras automáticas</CardTitle>
-          <CardDescription className="text-muted-foreground">O acesso é liberado pelo webhook de pagamento e rebaixado para Starter se a assinatura deixar de ficar ativa.</CardDescription>
+          <CardDescription className="text-muted-foreground">O acesso é liberado pelo webhook da Cakto e rebaixado para Starter se a assinatura deixar de ficar ativa.</CardDescription>
         </CardHeader>
       </Card>
     </div>

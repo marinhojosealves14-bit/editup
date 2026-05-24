@@ -40,6 +40,7 @@ import {
 import type { WorkspaceClient, WorkspaceTask } from "@/lib/workspace-store"
 import { cn } from "@/lib/utils"
 import { getChecklistProgress } from "@/lib/workflow-insights"
+import { getCreativeCloudRedeemWhatsAppUrl } from "@/lib/creative-cloud"
 
 const now = new Date()
 
@@ -383,7 +384,7 @@ export default function DashboardPage() {
                 </p>
               </div>
             </div>
-            <Button onClick={() => router.push("/dashboard/configuracoes?section=plans")}>
+            <Button onClick={() => window.open(getCreativeCloudRedeemWhatsAppUrl(currentUser.creativeCloudRedeemAvailableUntil), "_blank")}>
               Resgatar assinatura
             </Button>
           </CardContent>
